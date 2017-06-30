@@ -4,6 +4,8 @@ import android.os.AsyncTask;
 import android.util.Base64;
 import android.util.Log;
 
+import com.cloud4magic.freecast.utils.Logger;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -53,6 +55,7 @@ public class ParametersConfig {
         @Override
         protected Response doInBackground(String... params) {
             String url = params[0];
+            Logger.e("xmzd", "url: " + url);
             int type = Integer.parseInt(params[1]);
             Response response = new Response();
             response.type = type;
@@ -94,11 +97,10 @@ public class ParametersConfig {
                     response.body += lines;
                 }
                 response.statusCode = 200;
-                Log.d("body", response.body);
+                Logger.e("xmzd", "body: " + response.body);
             } catch (Exception e) {
-                Log.e("error", e.toString());
+                Log.e("xmzd", "error: " + e.toString());
             }
-
             return response;
         }
 
