@@ -6,4 +6,5 @@
     <color name="black">#000000</color>
     <color name="text_logo">#00b2e1</color>
     <color name="player_option">#616264</color>
+    <color name="blue_line">#3092ac</color>
 </resources>
