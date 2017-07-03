@@ -6,13 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".PlayerActivity">
 
-    <TextView
-        android:id="@+id/record_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_margin="16dp"/>
-
     <RelativeLayout
         android:id="@+id/player_content"
         android:layout_width="match_parent"
@@ -26,6 +19,18 @@
 
     </RelativeLayout>
 
+    <TextView
+        android:id="@+id/player_record_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="56dp"
+        android:text="12:90"
+        android:textColor="@color/text_red"
+        android:textSize="15sp"
+        android:visibility="gone"/>
+
     <LinearLayout
         android:id="@+id/player_loading"
         android:layout_width="match_parent"
@@ -35,117 +40,135 @@
         android:orientation="vertical">
 
         <ImageView
-            android:layout_width="60dp"
-            android:layout_height="60dp"/>
+            android:layout_width="39dp"
+            android:layout_height="39dp"
+            android:src="@mipmap/ic_logo"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="10dp"
             android:text="@string/connecting"
             android:textColor="@color/text_logo"
-            android:textSize="12sp"/>
+            android:textSize="8.3sp"/>
 
     </LinearLayout>
 
     <RelativeLayout
         android:id="@+id/player_option_top"
         android:layout_width="match_parent"
-        android:layout_height="55dp"
+        android:layout_height="56dp"
         android:layout_alignParentTop="true"
         android:background="@color/player_option">
 
-        <ImageView
+        <RelativeLayout
             android:id="@+id/player_back"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="20dp"
-            android:src="@drawable/ic_back"/>
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingLeft="12dp">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_back"/>
+
+        </RelativeLayout>
 
         <TextView
             android:id="@+id/player_wifi_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="WifiName"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="26.3dp"
+            android:layout_toRightOf="@+id/player_back"
+            android:ellipsize="end"
+            android:maxLength="30"
+            android:maxLines="1"
+            android:text="@string/no_wifi"
             android:textColor="@color/text_logo"
-            android:textSize="20sp"/>
+            android:textSize="15sp"/>
 
         <ImageView
             android:id="@+id/player_wifi_icon"
-            android:layout_width="15dp"
-            android:layout_height="15dp"
+            android:layout_width="16.7dp"
+            android:layout_height="16.7dp"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="18dp"
+            android:layout_marginLeft="22dp"
             android:layout_toRightOf="@+id/player_wifi_name"
-            android:src="@drawable/side_nav_bar"/>
+            android:src="@drawable/selector_wifi"/>
 
     </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/player_option_bottom"
         android:layout_width="match_parent"
-        android:layout_height="55dp"
-        android:paddingLeft="48dp"
-        android:paddingRight="48dp"
+        android:layout_height="56dp"
         android:layout_alignParentBottom="true"
         android:background="@color/player_option"
+        android:gravity="center"
         android:orientation="horizontal">
 
         <RelativeLayout
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight="1">
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp">
 
             <ImageView
                 android:id="@+id/player_take_photo"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:layout_centerInParent="true"
-                android:src="@drawable/side_nav_bar"/>
+                android:src="@drawable/selector_player_camera"/>
 
         </RelativeLayout>
 
         <RelativeLayout
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight="1">
+            android:layout_marginLeft="4dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp">
 
             <ImageView
                 android:id="@+id/player_record_video"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:layout_centerInParent="true"
-                android:src="@drawable/side_nav_bar"/>
+                android:src="@drawable/selector_player_record"/>
 
         </RelativeLayout>
 
         <RelativeLayout
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight="1">
+            android:layout_marginLeft="4dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp">
 
             <ImageView
                 android:id="@+id/player_library"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:layout_centerInParent="true"
-                android:src="@drawable/side_nav_bar"/>
+                android:src="@drawable/selector_player_library"/>
 
         </RelativeLayout>
 
         <RelativeLayout
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight="1">
+            android:layout_marginLeft="4dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp">
 
             <ImageView
                 android:id="@+id/player_config"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:layout_centerInParent="true"
-                android:src="@drawable/side_nav_bar"/>
+                android:src="@drawable/selector_player_config"/>
 
         </RelativeLayout>
 

@@ -1,5 +1,13 @@
 package com.cloud4magic.freecast;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.media.AudioManager;
+import android.media.SoundPool;
+import android.net.ConnectivityManager;
 import android.net.TrafficStats;
 import android.os.Bundle;
 import android.os.Environment;
@@ -7,6 +15,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -17,6 +26,7 @@ import android.widget.TextView;
 
 import com.cloud4magic.freecast.api.ParametersConfig;
 import com.cloud4magic.freecast.api.RemoteTunnel;
+import com.cloud4magic.freecast.api.WLANAPI;
 import com.cloud4magic.freecast.component.DeviceEntity;
 import com.cloud4magic.freecast.utils.Logger;
 import com.cloud4magic.freecast.utils.ToastUtil;
@@ -26,9 +36,13 @@ import com.demo.sdk.Enums;
 import com.demo.sdk.Module;
 import com.demo.sdk.Player;
 import com.demo.sdk.Scanner;
+import com.nineoldandroids.animation.ObjectAnimator;
+import com.nineoldandroids.animation.PropertyValuesHolder;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -52,6 +66,7 @@ public class PlayerActivity extends AppCompatActivity {
     private String mPathVideo = null;
     private String mPathVoice = null;
     private String mPathPlayback = null;
+    private String mPathRecord = null;
 
     private ParametersConfig mParametersConfig = null;
     private RemoteTunnel mRemoteTunnelConnect = null;
@@ -72,8 +87,8 @@ public class PlayerActivity extends AppCompatActivity {
     private int mVideoType = 0;
     // single screen: 1, two screens: 2
     private int mVideoScreen = 1;
-    private int mViewWidth;
-    private int mViewHeight;
+    private int mScreenWidth;
+    private int mScreenHeight;
     private boolean mIsLx520 = true;
     private String mPipeNot520 = "1";
 
@@ -108,12 +123,24 @@ public class PlayerActivity extends AppCompatActivity {
     ImageView mWifiIconView;
     @BindView(R.id.player_option_bottom)
     LinearLayout mOptionBottomView;
-
-    @BindView(R.id.record_time)
-    TextView mRecordTime;
+    @BindView(R.id.player_take_photo)
+    ImageView mTakePhotoView;
+    @BindView(R.id.player_record_video)
+    ImageView mRecordVideoView;
+    @BindView(R.id.player_library)
+    ImageView mLibraryView;
+    @BindView(R.id.player_config)
+    ImageView mConfigView;
+    @BindView(R.id.player_record_time)
+    TextView mRecordTimeView;
 
     private Handler mHandler = new Handler();
     private boolean mOptionShowing = false;
+    private SoundPool mSoundPool = null;
+    private int mVoiceTakePhoto = -1;
+    private int mVoiceStartRecord = -1;
+    private int mVoiceEndRecord = -1;
+    private boolean mInitDevice = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -124,11 +151,29 @@ public class PlayerActivity extends AppCompatActivity {
         // keep screen on
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_player);
+        // screen pixels
+        DisplayMetrics metric = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metric);
+        mScreenWidth = metric.widthPixels;
+        mScreenHeight = metric.heightPixels;
+        // bind
         mUnbinder = ButterKnife.bind(this);
         // show loading view
-        showLoadingView();
+        mLoadView.setVisibility(View.VISIBLE);
+        mOptionTopView.setVisibility(View.VISIBLE);
+        mOptionBottomView.setVisibility(View.VISIBLE);
+        setOptionBottomEnable(false);
+        mContentView.setVisibility(View.GONE);
         // create storage
         createSDCardDir();
+        // init SoundPool
+        mSoundPool = new SoundPool(10, AudioManager.STREAM_SYSTEM, 5);
+        mVoiceTakePhoto = mSoundPool.load(this, R.raw.photo_voice, 1);
+        mVoiceStartRecord = mSoundPool.load(this, R.raw.begin_record, 2);
+        mVoiceEndRecord = mSoundPool.load(this, R.raw.end_record, 3);
+        // register receiver
+        registerReceiver(mWifiChangedReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+        getWifiConnection();
     }
 
     @Override
@@ -141,27 +186,30 @@ public class PlayerActivity extends AppCompatActivity {
      * loading
      */
     private void showLoadingView() {
-        mLoadView.setVisibility(View.VISIBLE);
-        mOptionTopView.setVisibility(View.VISIBLE);
-        mOptionBottomView.setVisibility(View.VISIBLE);
-        mContentView.setVisibility(View.GONE);
+        if (mLoadView != null) {
+            mLoadView.setVisibility(View.VISIBLE);
+        }
+        showOptionView();
+        if (mContentView != null) {
+            mContentView.setVisibility(View.GONE);
+        }
     }
 
     /**
      * playing
      */
     private void showPlayerView() {
-        mLoadView.setVisibility(View.GONE);
-        mContentView.setVisibility(View.VISIBLE);
+        if (mLoadView != null) {
+            mLoadView.setVisibility(View.GONE);
+        }
+        if (mContentView != null) {
+            mContentView.setVisibility(View.VISIBLE);
+        }
+        setOptionBottomEnable(true);
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (mOptionTopView != null) {
-                    mOptionTopView.setVisibility(View.GONE);
-                }
-                if (mOptionBottomView != null) {
-                    mOptionBottomView.setVisibility(View.GONE);
-                }
+                hideOptionView();
             }
         }, 2000);
     }
@@ -177,21 +225,57 @@ public class PlayerActivity extends AppCompatActivity {
             return true;
         }
         mOptionShowing = true;
-        mOptionTopView.setVisibility(View.VISIBLE);
-        mOptionBottomView.setVisibility(View.VISIBLE);
+        showOptionView();
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (mOptionTopView != null) {
-                    mOptionTopView.setVisibility(View.GONE);
-                }
-                if (mOptionBottomView != null) {
-                    mOptionBottomView.setVisibility(View.GONE);
-                }
+                hideOptionView();
                 mOptionShowing = false;
             }
         }, 5000);
         return true;
+    }
+
+    /**
+     * show option view with animation
+     */
+    private void showOptionView() {
+        PropertyValuesHolder alpha = PropertyValuesHolder.ofFloat("alpha", 0.8f, 1.0f);
+        if (mOptionTopView != null) {
+            PropertyValuesHolder translationY = PropertyValuesHolder.ofFloat("y", -mOptionTopView.getHeight(), 0);
+            ObjectAnimator.ofPropertyValuesHolder(mOptionTopView, alpha, translationY).setDuration(600).start();
+        }
+        if (mOptionBottomView != null) {
+            PropertyValuesHolder translationY = PropertyValuesHolder.ofFloat("y", mScreenHeight, mScreenHeight - mOptionBottomView.getHeight());
+            ObjectAnimator.ofPropertyValuesHolder(mOptionBottomView, alpha, translationY).setDuration(600).start();
+            setOptionBottomEnable(true);
+        }
+    }
+
+    /**
+     * hide option view with animation
+     */
+    private void hideOptionView() {
+        PropertyValuesHolder alpha = PropertyValuesHolder.ofFloat("alpha", 1.0f, 0.8f);
+        if (mOptionTopView != null) {
+            PropertyValuesHolder translationY = PropertyValuesHolder.ofFloat("y", 0, -mOptionTopView.getHeight());
+            ObjectAnimator.ofPropertyValuesHolder(mOptionTopView, alpha, translationY).setDuration(600).start();
+        }
+        if (mOptionBottomView != null) {
+            PropertyValuesHolder translationY = PropertyValuesHolder.ofFloat("y", mOptionBottomView.getTop(), mScreenHeight);
+            ObjectAnimator.ofPropertyValuesHolder(mOptionBottomView, alpha, translationY).setDuration(600).start();
+            setOptionBottomEnable(false);
+        }
+    }
+
+    /**
+     * set enable
+     */
+    private void setOptionBottomEnable(boolean enable) {
+        mTakePhotoView.setEnabled(enable);
+        mRecordVideoView.setEnabled(enable);
+        mLibraryView.setEnabled(enable);
+        mConfigView.setEnabled(enable);
     }
 
     /**
@@ -232,6 +316,9 @@ public class PlayerActivity extends AppCompatActivity {
      * scan device
      */
     private void scanDevice() {
+        if (mInitDevice) {
+            return;
+        }
         Scanner scanner = new Scanner(this);
         scanner.setOnScanOverListener(new Scanner.OnScanOverListener() {
             @Override
@@ -255,6 +342,7 @@ public class PlayerActivity extends AppCompatActivity {
                             Logger.e("xmzd", "device ip: " + mDeviceIp);
                             Logger.e("xmzd", "device name: " + mDeviceName);
                             found = true;
+                            mInitDevice = true;
                             connectDevice();
                             break;
                         }
@@ -735,11 +823,15 @@ public class PlayerActivity extends AppCompatActivity {
                             // recording
                             if (mRecording) {
                                 mVideoTime++;
-                                mRecordTime.setVisibility(View.VISIBLE);
-                                mRecordTime.setText("REC " + showTimeCount(mVideoTime));
+                                if (mRecordTimeView != null) {
+                                    mRecordTimeView.setVisibility(View.VISIBLE);
+                                    mRecordTimeView.setText("REC " + showTimeCount(mVideoTime));
+                                }
                             } else {
                                 mVideoTime = 0;
-                                mRecordTime.setVisibility(View.INVISIBLE);
+                                if (mRecordTimeView != null) {
+                                    mRecordTimeView.setVisibility(View.INVISIBLE);
+                                }
                             }
 
                             /*if (mIsSDRecord) {
@@ -757,7 +849,7 @@ public class PlayerActivity extends AppCompatActivity {
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
                     }
-                    if (mPlayer.getState() != Enums.State.PLAYING) {
+                    if (mPlayer != null && mPlayer.getState() != Enums.State.PLAYING) {
                         mConnectTime++;
                         if (mConnectTime > 30) {
                             runOnUiThread(new Runnable() {
@@ -888,12 +980,63 @@ public class PlayerActivity extends AppCompatActivity {
 
     @OnClick(R.id.player_take_photo)
     protected void actionTakePhoto() {
-        // TODO: 2017/6/30 take photo
+        if (mPlayer == null) {
+            return;
+        }
+        // photo name
+        String photoName = getFileName();
+        if (TextUtils.isEmpty(mPathPhoto)) {
+            createSDCardDir();
+        }
+        try {
+            mFos = new FileOutputStream(mPathPhoto + "/IMG_" + photoName + ".jpg");
+            mPlayer.takePhoto().compress(Bitmap.CompressFormat.JPEG, 100, mFos);
+            if (mSoundPool != null) {
+                mSoundPool.play(mVoiceTakePhoto, 1, 1, 0, 0, 1);
+            }
+            ToastUtil.show(PlayerActivity.this, "Photo has been saved as " + mPathPhoto + "/IMG_" + photoName + ".jpg");
+            mFos.flush();
+            mFos.close();
+        } catch (FileNotFoundException e) {
+            Logger.e("xmzd", "FileNotFoundException " + e.toString());
+        } catch (IOException e) {
+            Logger.e("xmzd", "IOException " + e.toString());
+        }
+        mFos = null;
     }
 
     @OnClick(R.id.player_record_video)
     protected void actionRecordVideo() {
-        // TODO: 2017/6/30 record video
+        if (mPlayer == null) {
+            return;
+        }
+        if (mRecording) {
+            if (mSoundPool != null) {
+                mSoundPool.play(mVoiceEndRecord, 1, 1, 0, 0, 1);
+            }
+            mPlayer.endRecord();
+            mRecording = false;
+            if (mRecordVideoView != null) {
+                mRecordVideoView.setSelected(false);
+            }
+            ToastUtil.show(PlayerActivity.this, "Video has been saved as " + mPathRecord);
+        } else {
+            if (TextUtils.isEmpty(mPathVideo)) {
+                createSDCardDir();
+            }
+            mPathRecord = mPathVideo + "/VIDEO_" + getFileName() + ".mp4";
+            // beginRecord0: ffmpeg  beginRecord1: mp4v2
+            if (mPlayer.beginRecord0(mPathVideo, "/VIDEO_" + getFileName())) {
+                if (mSoundPool != null) {
+                    mSoundPool.play(mVoiceStartRecord, 1, 1, 0, 0, 1);
+                }
+                mVideoTime = 0;
+                mRecording = true;
+                if (mRecordVideoView != null) {
+                    mRecordVideoView.setSelected(true);
+                }
+            }
+        }
     }
 
     @OnClick(R.id.player_library)
@@ -904,6 +1047,15 @@ public class PlayerActivity extends AppCompatActivity {
     @OnClick(R.id.player_config)
     protected void actionConfig() {
         // TODO: 2017/6/30 jump to config page
+    }
+
+    /**
+     * get file name prefix
+     */
+    private String getFileName() {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
+        Date date = new Date(System.currentTimeMillis());
+        return format.format(date);
     }
 
     /**
@@ -979,14 +1131,48 @@ public class PlayerActivity extends AppCompatActivity {
             mRemoteTunnelConnect.closeTunnels();
             mRemoteTunnelConnect = null;
         }
+        mInitDevice = false;
+    }
+
+    /**
+     * broadcastReceiver, when wifi connection changed
+     */
+    private BroadcastReceiver mWifiChangedReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            getWifiConnection();
+        }
+    };
+
+    /**
+     * wifi connection
+     */
+    private void getWifiConnection() {
+        WLANAPI wlanapi = new WLANAPI(PlayerActivity.this);
+        String ssid = wlanapi.getSSID();
+        if (!"NULL".equals(ssid) && !TextUtils.isEmpty(ssid) && ssid.length() > 2) {
+            ssid = ssid.substring(1, ssid.length() - 1);
+            if (!"NULL".equals(ssid) && !TextUtils.isEmpty(ssid) && !ssid.contains("unknown ssid")) {
+                mWifiNameView.setText(ssid);
+                mWifiIconView.setSelected(true);
+            } else {
+                mWifiNameView.setText(getResources().getString(R.string.no_wifi));
+                mWifiIconView.setSelected(false);
+            }
+        } else {
+            mWifiNameView.setText(getResources().getString(R.string.no_wifi));
+            mWifiIconView.setSelected(false);
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        mStopTraffic = true;
         if (mUnbinder != null) {
             mUnbinder.unbind();
         }
         stop();
+        unregisterReceiver(mWifiChangedReceiver);
     }
 }
