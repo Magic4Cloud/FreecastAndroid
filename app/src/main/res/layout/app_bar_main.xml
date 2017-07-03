@@ -25,12 +25,12 @@
             android:layout_marginTop="60dp"
             android:layout_marginBottom="30dp"
             android:layout_gravity="center_horizontal"
-            android:src="@drawable/temp_logo"/>
+            android:src="@mipmap/ic_logo"/>
        <FrameLayout
            android:id="@+id/main_live_view"
            style="@style/main_card_style">
            <ImageView
-               android:src="@drawable/temp_live_view_icon"
+               android:src="@drawable/button_view_nor"
                style="@style/main_card_img_style"/>
        </FrameLayout>
 
@@ -38,7 +38,7 @@
             android:id="@+id/main_setting"
             style="@style/main_card_style">
             <ImageView
-                android:src="@drawable/temp_browse"
+                android:src="@drawable/button_browse_nor"
                 style="@style/main_card_img_style"/>
         </FrameLayout>
 
@@ -46,7 +46,7 @@
             android:id="@+id/main_browse"
             style="@style/main_card_style">
             <ImageView
-                android:src="@drawable/temp_setting_icon"
+                android:src="@drawable/button_configue_nor"
                 style="@style/main_card_img_style"/>
         </FrameLayout>
 

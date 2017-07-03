@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
+import com.cloud4magic.freecast.ui.ConfigureActivity;
 import com.cloud4magic.freecast.utils.StatusBarUtil;
 
 import butterknife.BindView;
@@ -103,6 +104,7 @@ public class MainActivity extends AppCompatActivity
                 startActivity(new Intent(this,PlayerActivity.class));
                 break;
             case R.id.main_setting: // 设置界面
+                startActivity(new Intent(this, ConfigureActivity.class));
                 break;
             case R.id.main_browse:  // 图片和视频
                 break;
