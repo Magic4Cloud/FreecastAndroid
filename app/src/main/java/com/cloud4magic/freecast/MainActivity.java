@@ -155,7 +155,7 @@ public class MainActivity extends AppCompatActivity
         PropertyValuesHolder scaleY = PropertyValuesHolder.ofFloat(View.SCALE_Y, 1, 0.9f, 1, 1.1f, 1);
         final ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(mainLogo, scaleX, scaleY);
         animator.setInterpolator(new AccelerateDecelerateInterpolator());
-        animator.setDuration(2500);
+        animator.setDuration(2000);
         animator.start();
     }
 
