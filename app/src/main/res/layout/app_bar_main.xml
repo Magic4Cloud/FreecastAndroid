@@ -35,7 +35,7 @@
        </FrameLayout>
 
         <FrameLayout
-            android:id="@+id/main_setting"
+            android:id="@+id/main_browse"
             style="@style/main_card_style">
             <ImageView
                 android:src="@drawable/button_browse_nor"
@@ -43,7 +43,7 @@
         </FrameLayout>
 
         <FrameLayout
-            android:id="@+id/main_browse"
+            android:id="@+id/main_setting"
             style="@style/main_card_style">
             <ImageView
                 android:src="@drawable/button_configue_nor"

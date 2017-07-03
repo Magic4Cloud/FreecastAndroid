@@ -71,6 +71,7 @@ public class BubbleSeekBar extends View {
     private boolean isShowSectionMark; // show demarcation points or not
     private boolean isAutoAdjustSectionMark; // auto scroll to the nearest section_mark or not
     private boolean isShowSectionText; // show section-text or not
+    private boolean isShowBubble = true;
     private int mSectionTextSize; // text size of section-text
     private int mSectionTextColor; // text color of section-text
     @TextPosition
@@ -472,6 +473,8 @@ public class BubbleSeekBar extends View {
                         }
                     } else {
                         float m = mMin + mSectionValue * i;
+                        if (i == 1)
+                            m = 720;
                         canvas.drawText(isFloatType ? float2String(m) : (int) m + "", x_, y_, mPaint);
                     }
                 }
@@ -493,7 +496,10 @@ public class BubbleSeekBar extends View {
                     mProgress != mMin && mProgress != mMax)) {
                 canvas.drawText(String.valueOf(getProgressFloat()), mThumbCenterX, y_, mPaint);
             } else {
-                canvas.drawText(String.valueOf(getProgress()), mThumbCenterX, y_, mPaint);
+                int progress = getProgress();
+                if (progress == 780)
+                    progress = 720;
+                canvas.drawText(String.valueOf(progress), mThumbCenterX, y_, mPaint);
             }
         }
 
@@ -729,7 +735,7 @@ public class BubbleSeekBar extends View {
 
         mBubbleView.setAlpha(0);
         mBubbleView.setVisibility(VISIBLE);
-        mBubbleView.animate().alpha(1f).setDuration(mAnimDuration)
+        mBubbleView.animate().alpha(isShowBubble?1f:0f).setDuration(mAnimDuration)
                 .setListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationStart(Animator animation) {
@@ -1045,6 +1051,14 @@ public class BubbleSeekBar extends View {
     private float formatFloat(float value) {
         BigDecimal bigDecimal = BigDecimal.valueOf(value);
         return bigDecimal.setScale(1, BigDecimal.ROUND_HALF_UP).floatValue();
+    }
+
+    /**
+     * 是否显示Bubble
+     */
+    public void isShowBubble(boolean isShow)
+    {
+        isShowBubble = isShow;
     }
 
     /**

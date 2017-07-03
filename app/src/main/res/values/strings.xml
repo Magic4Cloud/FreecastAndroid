@@ -9,4 +9,13 @@
     <string name="connecting">Connecting…</string>
     <string name="video_selection">Video</string>
     <string name="password_selection">Password</string>
+    <string name="image_quality">Image Quality</string>
+    <string name="smooth">Smooth</string>
+    <string name="good">Good</string>
+    <string name="best">Best</string>
+    <string name="custom">Custom</string>
+    <string name="resolution">Resolution</string>
+    <string name="bit_rate">Bit Rate</string>
+    <string name="frame_rate">Frame Rate</string>
+    <string name="modify">Modify</string>
 </resources>
