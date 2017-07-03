@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/gray_bg"
+              xmlns:tools="http://schemas.android.com/tools"
+              xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/temp_main_bg"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textColor="@color/text_blue"
+        android:text="@string/image_quality"
+        android:layout_marginTop="15dp"
+        android:layout_gravity="center"
+        />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:orientation="horizontal"
+        android:layout_marginTop="23dp"
+        android:background="@drawable/shape_selection_bg"
+        android:layout_gravity="center">
+
+        <TextView
+            android:id="@+id/smooth_part"
+            style="@style/text_selection_style"
+            android:layout_width="72dp"
+            android:text="@string/smooth"/>
+
+        <View
+            android:layout_width="1dp"
+            android:background="@color/text_logo"
+            android:layout_height="match_parent"/>
+        <TextView
+            android:id="@+id/good_part"
+            android:layout_width="72dp"
+            style="@style/text_selection_style"
+            android:text="@string/good"
+            />
+        <View
+            android:layout_width="1dp"
+            android:background="@color/text_logo"
+            android:layout_height="match_parent"/>
+        <TextView
+            android:id="@+id/best_part"
+            android:layout_width="72dp"
+            style="@style/text_selection_style"
+            android:text="@string/best"
+            />
+        <View
+            android:layout_width="1dp"
+            android:background="@color/text_logo"
+            android:layout_height="match_parent"/>
+        <TextView
+            android:id="@+id/custom_part"
+            android:layout_width="72dp"
+            style="@style/text_selection_style"
+            android:text="@string/custom"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginRight="35dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textColor="@color/text_normal"
+            android:text="@string/resolution"
+            android:layout_marginRight="10dp"
+            tools:text="Resolution"
+            />
+
+        <com.cloud4magic.freecast.widget.BubbleSeekBar
+            android:id="@+id/resolution_seekbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:bsb_thumb_text_size="12sp"
+            app:bsb_section_text_size="12sp"
+            app:bsb_bubble_color="@color/text_blue"
+            app:bsb_bubble_text_color="@color/white"
+            app:bsb_max="1080"
+            app:bsb_min="480"
+            app:bsb_progress="480"
+            app:bsb_second_track_color="@color/text_blue"
+            app:bsb_section_count="2"
+            app:bsb_auto_adjust_section_mark="true"
+            app:bsb_section_text_position="below_section_mark"
+            app:bsb_show_section_mark="true"
+            app:bsb_show_section_text="true"
+            app:bsb_show_thumb_text="true"
+            app:bsb_track_color="@color/track_color"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginRight="35dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textColor="@color/text_normal"
+            android:layout_marginRight="10dp"
+            android:text="@string/bit_rate"
+            />
+
+        <com.cloud4magic.freecast.widget.BubbleSeekBar
+            android:id="@+id/bitrate_seekbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:bsb_bubble_color="@color/text_blue"
+            app:bsb_bubble_text_color="@color/white"
+            app:bsb_thumb_text_size="12sp"
+            app:bsb_section_text_size="12sp"
+            app:bsb_max="1"
+            app:bsb_min="8"
+            app:bsb_progress="0"
+            app:bsb_second_track_color="@color/text_blue"
+            app:bsb_section_text_position="bottom_sides"
+            app:bsb_show_section_text="true"
+            app:bsb_show_thumb_text="true"
+            app:bsb_track_color="@color/track_color"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="35dp"
+        android:layout_marginTop="40dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:text="@string/frame_rate"
+            android:textColor="@color/text_normal"
+            android:textSize="12sp"
+            />
+
+
+        <com.cloud4magic.freecast.widget.BubbleSeekBar
+            android:id="@+id/frame_rate_seekbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:bsb_bubble_color="@color/text_blue"
+            app:bsb_bubble_text_color="@color/white"
+            app:bsb_max="10"
+            app:bsb_min="30"
+            app:bsb_progress="0"
+            app:bsb_second_track_color="@color/text_blue"
+            app:bsb_section_text_position="bottom_sides"
+            app:bsb_section_text_size="12sp"
+            app:bsb_show_section_text="true"
+            app:bsb_show_thumb_text="true"
+            app:bsb_thumb_text_size="12sp"
+            app:bsb_track_color="@color/track_color"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/modify_button"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_marginLeft="60dp"
+        android:layout_marginRight="60dp"
+        android:layout_marginTop="60dp"
+        android:background="@drawable/shape_button_blue"
+        android:gravity="center"
+        android:text="@string/modify"
+        android:textColor="@color/text_blue"
+        android:textSize="12sp"/>
+</LinearLayout>

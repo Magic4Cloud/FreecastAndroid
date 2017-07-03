@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+           >
+        <ImageView
+            android:id="@+id/configure_back"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:padding="10dp"
+            android:src="@drawable/ic_back"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:orientation="horizontal"
+            android:background="@drawable/shape_selection_bg"
+            android:layout_gravity="center">
+
+            <TextView
+                android:id="@+id/video_part"
+                style="@style/text_selection_style"
+                android:layout_width="86dp"
+                android:text="@string/video_selection"/>
+
+            <View
+                android:layout_width="1dp"
+                android:background="@color/text_logo"
+                android:layout_height="match_parent"/>
+            <TextView
+                android:id="@+id/password_part"
+                android:layout_width="86dp"
+                style="@style/text_selection_style"
+                android:text="@string/password_selection"
+                />
+        </LinearLayout>
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/configure_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+</LinearLayout>
