@@ -1,5 +1,9 @@
 package com.cloud4magic.freecast;
 
+import android.animation.Animator;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,7 +15,9 @@ import android.view.Display;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 
 import com.cloud4magic.freecast.ui.ConfigureActivity;
 import com.cloud4magic.freecast.utils.StatusBarUtil;
@@ -40,13 +46,15 @@ public class MainActivity extends AppCompatActivity
     NavigationView mNavView;
     @BindView(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
+    @BindView(R.id.main_logo)
+    ImageView mainLogo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-
+        startLogoAnime();
         mNavView.setNavigationItemSelectedListener(this);
         mDrawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
@@ -72,7 +80,7 @@ public class MainActivity extends AppCompatActivity
 
             }
         });
-        StatusBarUtil.setTranslucentForDrawerLayout(this,mDrawerLayout);
+        StatusBarUtil.setTranslucentForDrawerLayout(this, mDrawerLayout);
     }
 
     @Override
@@ -85,6 +93,10 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -98,16 +110,53 @@ public class MainActivity extends AppCompatActivity
      * 主界面点击事件
      */
     @OnClick({R.id.main_live_view, R.id.main_setting, R.id.main_browse})
-    public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.main_live_view: // 连接设备播放
-                startActivity(new Intent(this,PlayerActivity.class));
-                break;
-            case R.id.main_setting: // 设置界面
-                startActivity(new Intent(this, ConfigureActivity.class));
-                break;
-            case R.id.main_browse:  // 图片和视频
-                break;
-        }
+    public void onViewClicked(final View view) {
+
+        ObjectAnimator objectAnimatorX = ObjectAnimator.ofFloat(view, View.SCALE_X, 1, 0.9f, 1);
+        ObjectAnimator objectAnimatorY = ObjectAnimator.ofFloat(view, View.SCALE_Y, 1, 0.9f, 1);
+        AnimatorSet animatorSet = new AnimatorSet();
+        animatorSet.playTogether(objectAnimatorX, objectAnimatorY);
+        animatorSet.setDuration(300);
+        animatorSet.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                switch (view.getId()) {
+                    case R.id.main_live_view: // 连接设备播放
+                        startActivity(new Intent(MainActivity.this, PlayerActivity.class));
+                        break;
+                    case R.id.main_setting: // 设置界面
+                        startActivity(new Intent(MainActivity.this, ConfigureActivity.class));
+                        break;
+                    case R.id.main_browse:  // 图片和视频
+                        break;
+                }
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+        animatorSet.start();
     }
+
+    private void startLogoAnime() {
+        PropertyValuesHolder scaleX = PropertyValuesHolder.ofFloat(View.SCALE_X, 1, 0.9f, 1, 1.1f, 1);
+        PropertyValuesHolder scaleY = PropertyValuesHolder.ofFloat(View.SCALE_Y, 1, 0.9f, 1, 1.1f, 1);
+        final ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(mainLogo, scaleX, scaleY);
+        animator.setInterpolator(new AccelerateDecelerateInterpolator());
+        animator.setDuration(2000);
+        animator.start();
+    }
+
 }

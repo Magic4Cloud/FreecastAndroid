@@ -3,6 +3,7 @@ package com.cloud4magic.freecast.ui.fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,6 +58,11 @@ public class VideoSettingFragment extends Fragment {
         mSmoothPart.setSelected(true);
         lastViewSelected = mSmoothPart;
         mResolutionSeekbar.isShowBubble(false);
+        mResolutionSeekbar.setUnit("p");
+        mBitrateSeekbar.setUnit("m");
+        mFrameRateSeekbar.setUnit("fps");
+        mBitrateSeekbar.setProgress(2);
+        switchCheck(mSmoothPart);
     }
 
     public static VideoSettingFragment newInstance() {
@@ -74,23 +80,66 @@ public class VideoSettingFragment extends Fragment {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.smooth_part:
+                mResolutionSeekbar.setProgress(480);
+                mBitrateSeekbar.setProgress(2);
+                mFrameRateSeekbar.setProgress(10);
                 break;
             case R.id.good_part:
+                mResolutionSeekbar.setProgress(780);
+                mBitrateSeekbar.setProgress(4);
+                mFrameRateSeekbar.setProgress(15);
                 break;
             case R.id.best_part:
+                mResolutionSeekbar.setProgress(1080);
+                mBitrateSeekbar.setProgress(6);
+                mFrameRateSeekbar.setProgress(30);
                 break;
             case R.id.custom_part:
-                break;
-            case R.id.modify_button:
+                mResolutionSeekbar.setProgress(780);
+                mBitrateSeekbar.setProgress(4.4f);
+                mFrameRateSeekbar.setProgress(20);
                 break;
         }
         switchCheck(view);
     }
 
+    /**
+     * 切换视频质量
+     */
     private void switchCheck(View view)
     {
         view.setSelected(true);
-        lastViewSelected.setSelected(false);
+        if (lastViewSelected != view)
+            lastViewSelected.setSelected(false);
         lastViewSelected = view;
+        if (view.getId() == R.id.custom_part)
+        {
+            mFrameRateSeekbar.getConfigBuilder()
+                    .thumbColor(ContextCompat.getColor(getContext(),R.color.text_blue))
+                    .build();
+            mBitrateSeekbar.getConfigBuilder()
+                    .thumbColor(ContextCompat.getColor(getContext(),R.color.text_blue))
+                    .build();
+            mResolutionSeekbar.getConfigBuilder()
+                    .thumbColor(ContextCompat.getColor(getContext(),R.color.text_blue))
+                    .build();
+            mFrameRateSeekbar.setEnabled(true);
+            mBitrateSeekbar.setEnabled(true);
+            mResolutionSeekbar.setEnabled(true);
+        }else
+        {
+            mFrameRateSeekbar.getConfigBuilder()
+                    .thumbColor(ContextCompat.getColor(getContext(),R.color.text_gray))
+                    .build();
+            mBitrateSeekbar.getConfigBuilder()
+                    .thumbColor(ContextCompat.getColor(getContext(),R.color.text_gray))
+                    .build();
+            mResolutionSeekbar.getConfigBuilder()
+                    .thumbColor(ContextCompat.getColor(getContext(),R.color.text_gray))
+                    .build();
+            mFrameRateSeekbar.setEnabled(false);
+            mBitrateSeekbar.setEnabled(false);
+            mResolutionSeekbar.setEnabled(false);
+        }
     }
 }
