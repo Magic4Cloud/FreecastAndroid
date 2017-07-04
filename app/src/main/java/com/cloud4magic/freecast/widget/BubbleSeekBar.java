@@ -875,6 +875,9 @@ public class BubbleSeekBar extends View {
         return mMax;
     }
 
+    /**
+     * 设置单位
+     */
     public void setUnit(String unit) {
         this.unit = unit;
     }

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/menu_bg"
+              android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="80dp"
+        android:src="@mipmap/ic_logo"/>
+
+    <TextView
+        android:id="@+id/version"
+        style="@style/menu_text_style"
+        android:layout_marginTop="30dp"
+        android:text="@string/version"/>
+
+    <TextView
+        android:id="@+id/disclaimer"
+        android:text="@string/disclaimer"
+        style="@style/menu_text_style"/>
+
+    <TextView
+        android:id="@+id/privacy_policy"
+        android:text="@string/privacy_policy"
+        style="@style/menu_text_style"/>
+
+    <TextView
+        android:id="@+id/copyright"
+        android:text="@string/copyright"
+        style="@style/menu_text_style"/>
+</LinearLayout>
