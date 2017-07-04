@@ -24,4 +24,15 @@
     <string name="bit_rate">Bit Rate</string>
     <string name="frame_rate">Frame Rate</string>
     <string name="modify">Modify</string>
+    <string name="ssid">SSID</string>
+    <string name="current_ssid">Current WiFi SSID</string>
+    <string name="current_password">Current Password</string>
+    <string name="new_password">New Password</string>
+    <string name="comfirm">Comfirm</string>
+    <string name="device">Device</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="version">Version</string>
+    <string name="disclaimer">Disclaimer</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="copyright">Copyright</string>
 </resources>

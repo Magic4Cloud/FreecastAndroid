@@ -1,7 +1,5 @@
 package com.cloud4magic.freecast;
 
-import android.animation.Animator;
-import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.content.Context;
@@ -12,7 +10,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Display;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -20,6 +17,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.cloud4magic.freecast.ui.ConfigureActivity;
+import com.cloud4magic.freecast.utils.Fglass;
 import com.cloud4magic.freecast.utils.StatusBarUtil;
 
 import butterknife.BindView;
@@ -31,8 +29,7 @@ import butterknife.OnClick;
  * Date   2017/6/29
  * Editor  Misuzu
  */
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity {
 
     @BindView(R.id.main_live_view)
     FrameLayout mMainLiveView;
@@ -48,6 +45,10 @@ public class MainActivity extends AppCompatActivity
     DrawerLayout mDrawerLayout;
     @BindView(R.id.main_logo)
     ImageView mainLogo;
+    @BindView(R.id.main_bg)
+    ImageView mMainBg;
+    @BindView(R.id.main_layout)
+    View mainLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +56,6 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         startLogoAnime();
-        mNavView.setNavigationItemSelectedListener(this);
         mDrawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
@@ -81,6 +81,12 @@ public class MainActivity extends AppCompatActivity
             }
         });
         StatusBarUtil.setTranslucentForDrawerLayout(this, mDrawerLayout);
+        mMainBg.post(new Runnable() {
+            @Override
+            public void run() {
+                Fglass.blur(mMainBg, mainLayout, 2, 8);
+            }
+        });
     }
 
     @Override
@@ -98,58 +104,31 @@ public class MainActivity extends AppCompatActivity
         super.onResume();
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
-    }
 
     /**
      * 主界面点击事件
      */
-    @OnClick({R.id.main_live_view, R.id.main_setting, R.id.main_browse})
+    @OnClick({R.id.main_live_view, R.id.main_setting, R.id.main_browse, R.id.side_menu})
     public void onViewClicked(final View view) {
 
-        ObjectAnimator objectAnimatorX = ObjectAnimator.ofFloat(view, View.SCALE_X, 1, 0.9f, 1);
-        ObjectAnimator objectAnimatorY = ObjectAnimator.ofFloat(view, View.SCALE_Y, 1, 0.9f, 1);
-        AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.playTogether(objectAnimatorX, objectAnimatorY);
-        animatorSet.setDuration(300);
-        animatorSet.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                switch (view.getId()) {
-                    case R.id.main_live_view: // 连接设备播放
-                        startActivity(new Intent(MainActivity.this, PlayerActivity.class));
-                        break;
-                    case R.id.main_setting: // 设置界面
-                        startActivity(new Intent(MainActivity.this, ConfigureActivity.class));
-                        break;
-                    case R.id.main_browse:  // 图片和视频
-                        break;
-                }
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-
-            }
-        });
-        animatorSet.start();
+        switch (view.getId()) {
+            case R.id.main_live_view: // 连接设备播放
+                startActivity(new Intent(MainActivity.this, PlayerActivity.class));
+                break;
+            case R.id.main_setting: // 设置界面
+                startActivity(new Intent(MainActivity.this, ConfigureActivity.class));
+                break;
+            case R.id.main_browse:  // 图片和视频
+                break;
+            case R.id.side_menu:
+                mDrawerLayout.openDrawer(GravityCompat.START);
+                break;
+        }
     }
 
+    /**
+     * Logo动画
+     */
     private void startLogoAnime() {
         PropertyValuesHolder scaleX = PropertyValuesHolder.ofFloat(View.SCALE_X, 1, 0.9f, 1, 1.1f, 1);
         PropertyValuesHolder scaleY = PropertyValuesHolder.ofFloat(View.SCALE_Y, 1, 0.9f, 1, 1.1f, 1);
@@ -159,4 +138,22 @@ public class MainActivity extends AppCompatActivity
         animator.start();
     }
 
+    /**
+     * 侧边栏点击事件
+     */
+    @OnClick({R.id.version, R.id.disclaimer, R.id.privacy_policy, R.id.copyright})
+    public void onMenuClicked(View view) {
+
+        switch (view.getId()) {
+            case R.id.version:
+                break;
+            case R.id.disclaimer:
+                break;
+            case R.id.privacy_policy:
+                break;
+            case R.id.copyright:
+                break;
+        }
+        mDrawerLayout.closeDrawer(GravityCompat.START);
+    }
 }
