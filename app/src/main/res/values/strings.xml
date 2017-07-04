@@ -8,6 +8,11 @@
 
     <string name="connecting">Connecting…</string>
     <string name="no_wifi">No wifi connected</string>
+    <string name="device_not_found">Device not found, please check your wifi connection!</string>
+    <string name="connect_failed_password">"Connect failed with wrong password!"</string>
+    <string name="connect_failed">"Connect failed!"</string>
+    <string name="sync_sd_failed">"Sync SDCard failed"</string>
+    <string name="reconnect_failed">Reconnect failed, please check your wifi connection!</string>
     <string name="video_selection">Video</string>
     <string name="password_selection">Password</string>
     <string name="image_quality">Image Quality</string>

@@ -79,7 +79,7 @@ public class PlayerActivity extends AppCompatActivity {
     private String mDevicePassword = "";
     private int mDevicePort = 554;
     private int mVoicePort = 80;
-    private int mFps = 20;
+    private int mFps = 24;
     private String mVersion = "";
     // hardware decode SurfaceView: 2, software decode SurfaceView: 0, software decode TextureView: 1
     private int mDecoderType = 0;
@@ -141,6 +141,7 @@ public class PlayerActivity extends AppCompatActivity {
     private int mVoiceStartRecord = -1;
     private int mVoiceEndRecord = -1;
     private boolean mInitDevice = false;
+    private boolean mShowLoading = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -164,6 +165,7 @@ public class PlayerActivity extends AppCompatActivity {
         mOptionBottomView.setVisibility(View.VISIBLE);
         setOptionBottomEnable(false);
         mContentView.setVisibility(View.GONE);
+        mShowLoading = true;
         // create storage
         createSDCardDir();
         // init SoundPool
@@ -186,19 +188,28 @@ public class PlayerActivity extends AppCompatActivity {
      * loading
      */
     private void showLoadingView() {
+        if (mShowLoading) {
+            return;
+        }
+        mShowLoading = true;
         if (mLoadView != null) {
             mLoadView.setVisibility(View.VISIBLE);
         }
-        showOptionView();
         if (mContentView != null) {
             mContentView.setVisibility(View.GONE);
         }
+        setOptionBottomEnable(false);
+        showOptionView();
     }
 
     /**
      * playing
      */
     private void showPlayerView() {
+        if (!mShowLoading) {
+            return;
+        }
+        mShowLoading = false;
         if (mLoadView != null) {
             mLoadView.setVisibility(View.GONE);
         }
@@ -248,7 +259,6 @@ public class PlayerActivity extends AppCompatActivity {
         if (mOptionBottomView != null) {
             PropertyValuesHolder translationY = PropertyValuesHolder.ofFloat("y", mScreenHeight, mScreenHeight - mOptionBottomView.getHeight());
             ObjectAnimator.ofPropertyValuesHolder(mOptionBottomView, alpha, translationY).setDuration(600).start();
-            setOptionBottomEnable(true);
         }
     }
 
@@ -264,7 +274,6 @@ public class PlayerActivity extends AppCompatActivity {
         if (mOptionBottomView != null) {
             PropertyValuesHolder translationY = PropertyValuesHolder.ofFloat("y", mOptionBottomView.getTop(), mScreenHeight);
             ObjectAnimator.ofPropertyValuesHolder(mOptionBottomView, alpha, translationY).setDuration(600).start();
-            setOptionBottomEnable(false);
         }
     }
 
@@ -272,10 +281,18 @@ public class PlayerActivity extends AppCompatActivity {
      * set enable
      */
     private void setOptionBottomEnable(boolean enable) {
-        mTakePhotoView.setEnabled(enable);
-        mRecordVideoView.setEnabled(enable);
-        mLibraryView.setEnabled(enable);
-        mConfigView.setEnabled(enable);
+        if (mTakePhotoView != null) {
+            mTakePhotoView.setEnabled(enable);
+        }
+        if (mRecordVideoView != null) {
+            mRecordVideoView.setEnabled(enable);
+        }
+        if (mLibraryView != null) {
+            mLibraryView.setEnabled(enable);
+        }
+        if (mConfigView != null) {
+            mConfigView.setEnabled(enable);
+        }
     }
 
     /**
@@ -348,11 +365,13 @@ public class PlayerActivity extends AppCompatActivity {
                         }
                     }
                     if (!found) {
-                        ToastUtil.show(PlayerActivity.this, "Device not found 1!");
+                        ToastUtil.show(PlayerActivity.this, getResources().getString(R.string.device_not_found));
+                        finish();
                     }
                 } else {
                     // device not found
-                    ToastUtil.show(PlayerActivity.this, "Device not found 2!");
+                    ToastUtil.show(PlayerActivity.this, getResources().getString(R.string.device_not_found));
+                    finish();
                 }
             }
         });
@@ -366,7 +385,6 @@ public class PlayerActivity extends AppCompatActivity {
         @Override
         public void onResult(ParametersConfig.Response result) {
             if (result == null) {
-                Logger.e("xmzd", "connect failed: result == null");
                 return;
             }
             switch (result.type) {
@@ -440,10 +458,10 @@ public class PlayerActivity extends AppCompatActivity {
                 // Set Sd Time
                 mParametersConfig.SetModuleRtcTime(date, hour, min, sec, tzStr);
             } else {
-                ToastUtil.show(PlayerActivity.this, "Connect failed with error password!");
+                ToastUtil.show(PlayerActivity.this, getResources().getString(R.string.connect_failed_password));
             }
         } else {
-            ToastUtil.show(PlayerActivity.this, "Connect failed !");
+            ToastUtil.show(PlayerActivity.this, getResources().getString(R.string.connect_failed));
         }
     }
 
@@ -452,7 +470,7 @@ public class PlayerActivity extends AppCompatActivity {
      */
     private void setConfigRtcTime(ParametersConfig.Response result) {
         if (result.statusCode != 200) {
-            ToastUtil.show(PlayerActivity.this, "Sync SDCard failed");
+            ToastUtil.show(PlayerActivity.this, getResources().getString(R.string.sync_sd_failed));
         }
         if (mRemoteTunnelConnect != null) {
             mRemoteTunnelConnect.closeTunnels();
@@ -744,7 +762,7 @@ public class PlayerActivity extends AppCompatActivity {
         mModule.setModuleIp(mDeviceIp);
         mController = mModule.getController();
         mPlayer = mModule.getPlayer();
-        mPlayer.setRecordFrameRate(mFps);
+        mPlayer.setRecordFrameRate(6);
         mPlayer.setAudioOutput(mOpenVoice);
         mRecording = mPlayer.isRecording();
         mPlayer.setDisplayView(getApplication(), mDisplayView, null, mDecoderType);
@@ -811,8 +829,8 @@ public class PlayerActivity extends AppCompatActivity {
                             if (mPlayer != null) {
                                 // if the player be free, need reconnect
                                 if (mPlayer.getState() == Enums.State.IDLE) {
-                                    showLoadingView();
                                     mPlayer.stop();
+                                    showLoadingView();
                                     if ("127.0.0.1".equals(mDeviceIp)) {
                                         remoteConnected(false);
                                     } else {
@@ -852,15 +870,17 @@ public class PlayerActivity extends AppCompatActivity {
                     if (mPlayer != null && mPlayer.getState() != Enums.State.PLAYING) {
                         mConnectTime++;
                         if (mConnectTime > 30) {
+                            mStopTraffic = true;
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
+                                    ToastUtil.show(PlayerActivity.this, getResources().getString(R.string.reconnect_failed));
                                     stop();
                                     finish();
                                 }
                             });
                         }
-                        Logger.e("xmzd", "connect time: " + mConnectTime);
+                        Logger.e("xmzd", "reconnect time: " + mConnectTime);
                     }
                 }
             }
@@ -980,7 +1000,7 @@ public class PlayerActivity extends AppCompatActivity {
 
     @OnClick(R.id.player_take_photo)
     protected void actionTakePhoto() {
-        if (mPlayer == null) {
+        if (mPlayer == null || mPlayer.getState() != Enums.State.PLAYING) {
             return;
         }
         // photo name
@@ -994,7 +1014,7 @@ public class PlayerActivity extends AppCompatActivity {
             if (mSoundPool != null) {
                 mSoundPool.play(mVoiceTakePhoto, 1, 1, 0, 0, 1);
             }
-            ToastUtil.show(PlayerActivity.this, "Photo has been saved as " + mPathPhoto + "/IMG_" + photoName + ".jpg");
+            ToastUtil.show(PlayerActivity.this, "Photo saved as " + mPathPhoto + "/IMG_" + photoName + ".jpg");
             mFos.flush();
             mFos.close();
         } catch (FileNotFoundException e) {
@@ -1007,7 +1027,7 @@ public class PlayerActivity extends AppCompatActivity {
 
     @OnClick(R.id.player_record_video)
     protected void actionRecordVideo() {
-        if (mPlayer == null) {
+        if (mPlayer == null || mPlayer.getState() != Enums.State.PLAYING) {
             return;
         }
         if (mRecording) {
@@ -1019,7 +1039,7 @@ public class PlayerActivity extends AppCompatActivity {
             if (mRecordVideoView != null) {
                 mRecordVideoView.setSelected(false);
             }
-            ToastUtil.show(PlayerActivity.this, "Video has been saved as " + mPathRecord);
+            ToastUtil.show(PlayerActivity.this, "Video saved as " + mPathRecord);
         } else {
             if (TextUtils.isEmpty(mPathVideo)) {
                 createSDCardDir();
