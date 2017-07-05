@@ -35,4 +35,10 @@
     <string name="disclaimer">Disclaimer</string>
     <string name="privacy_policy">Privacy Policy</string>
     <string name="copyright">Copyright</string>
+    <string name="modify_video_sucess">Set video params success!</string>
+    <string name="plz_connect">Please connect device first!</string>
+    <string name="input_newpass">Please input newpassword</string>
+    <string name="input_comfirm">Please input comfirm password</string>
+    <string name="input_not_consistent">Two input password must be consistent</string>
+    <string name="modify_password_sucess">Set password success!</string>
 </resources>

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,12 +12,23 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.cloud4magic.freecast.MyAplication;
 import com.cloud4magic.freecast.R;
+import com.cloud4magic.freecast.api.ParametersConfig;
+import com.cloud4magic.freecast.utils.Logger;
+import com.cloud4magic.freecast.utils.ToastUtil;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+
+import static com.cloud4magic.freecast.ui.fragment.VideoSettingFragment.mDeviceIp;
+import static com.cloud4magic.freecast.ui.fragment.VideoSettingFragment.mInitDevice;
 
 /**
  * 密码设置
@@ -48,13 +60,68 @@ public class PasswordSettingFragment extends Fragment {
     TextView mForgotPasswordButton;
     Unbinder unbinder;
 
+    private ParametersConfig mParametersConfig = null;
+    private String mDevicePassword = "admin";
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_password_setting_layout, container, false);
         unbinder = ButterKnife.bind(this, view);
+        initView();
         return view;
     }
+
+    private void initView()
+    {
+        if (mInitDevice)
+        {
+            mParametersConfig = new ParametersConfig(mDeviceIp + ":" + 80, mDevicePassword);
+            mParametersConfig.setOnResultListener(mConfigListener);
+            mParametersConfig.getUsernameAndPassword();
+        }
+    }
+
+    /**
+     * ParametersConfig.OnResultListener
+     */
+    private ParametersConfig.OnResultListener mConfigListener = new ParametersConfig.OnResultListener() {
+        @Override
+        public void onResult(ParametersConfig.Response result) {
+            if (result == null) {
+                return;
+            }
+            switch (result.type) {
+                case ParametersConfig.GET_USERNAME_PASSWORD:
+                    Logger.e("Misuzu", "ParametersConfig.GET_USERNAME_PASSWORD");
+                    mDevicePassword = praseJson(result.body);
+                    mCurrentPasswordEdit.setText(mDevicePassword);
+                    break;
+                case ParametersConfig.UPDATE_USERNAME_PASSWORD:
+                    ToastUtil.show(MyAplication.INSTANCE,MyAplication.INSTANCE.getString(R.string.modify_password_sucess));
+                    mComfirmEdit.setText("");
+                    mNewPasswordEdit.setText("");
+                    mCurrentPasswordEdit.setText(mDevicePassword);
+                    break;
+            }
+        }
+    };
+
+    /**
+     * 解析数据
+     */
+    public String praseJson(String json)
+    {
+        try {
+            JSONArray jsonArray = new JSONArray(json);
+            JSONObject jsonObject = jsonArray.getJSONObject(0);
+            return jsonObject.getString("U_PASS");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
 
     public static PasswordSettingFragment newInstance() {
 
@@ -85,6 +152,47 @@ public class PasswordSettingFragment extends Fragment {
             case R.id.forgot_password_button:
                 break;
         }
+    }
+
+    /**
+     * 修改提交点击
+     */
+    @OnClick(R.id.modify_button)
+    public void onModifyButtonClicked(View view)
+    {
+        if (mInitDevice && mParametersConfig != null)
+        {
+            submit();
+        }else
+        {
+            ToastUtil.show(MyAplication.INSTANCE, MyAplication.INSTANCE.getString(R.string.plz_connect));
+        }
+
+    }
+
+    /**
+     * 提交修改密码
+     */
+    private void submit() {
+        String newPass = mNewPasswordEdit.getText().toString();
+        String comfirm = mComfirmEdit.getText().toString();
+        if (TextUtils.isEmpty(newPass)) {
+            ToastUtil.show(MyAplication.INSTANCE,MyAplication.INSTANCE.getString(R.string.input_newpass));
+            return;
+        }
+        if (TextUtils.isEmpty(comfirm)) {
+            ToastUtil.show(MyAplication.INSTANCE,MyAplication.INSTANCE.getString(R.string.input_comfirm));
+            return;
+        }
+
+        if (!comfirm.equals(newPass))
+        {
+            ToastUtil.show(MyAplication.INSTANCE,MyAplication.INSTANCE.getString(R.string.input_not_consistent));
+            return;
+        }
+
+        mParametersConfig.updateUsernameAndPassword("admin",newPass);
+        mDevicePassword = newPass;
     }
 
     /**
