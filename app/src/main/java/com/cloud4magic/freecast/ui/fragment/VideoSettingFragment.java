@@ -177,7 +177,8 @@ public class VideoSettingFragment extends Fragment {
                     Logger.e("Misuzu", "ParametersConfig.GET_QUALITY");
                     quality = praseJson(result.body);
                     bitRate = getBitRate(quality);
-                    initSeekBar();
+                    if (mBitrateSeekbar != null)
+                        initSeekBar();
                     break;
                 case ParametersConfig.GET_FPS:
                     Logger.e("Misuzu", "ParametersConfig.GET_FPS");
