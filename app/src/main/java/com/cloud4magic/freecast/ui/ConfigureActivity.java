@@ -51,10 +51,7 @@ public class ConfigureActivity extends AppCompatActivity {
         mVideoPart.setSelected(true);
         mFragmentManager = getSupportFragmentManager();
         mFragmentManager.beginTransaction()
-                .add(R.id.configure_content,mVideoSettingFragment)
-                .add(R.id.configure_content,mPasswordSettingFragment)
-                .show(mVideoSettingFragment)
-                .hide(mPasswordSettingFragment)
+                .add(R.id.configure_content, mVideoSettingFragment)
                 .commit();
     }
 
@@ -76,12 +73,25 @@ public class ConfigureActivity extends AppCompatActivity {
             case R.id.password_part:
                 mPasswordPart.setSelected(true);
                 mVideoPart.setSelected(false);
-                mFragmentManager
-                        .beginTransaction()
-                        .show(mPasswordSettingFragment)
-                        .hide(mVideoSettingFragment)
-                        .commit();
+                if (mPasswordSettingFragment.isAdded())
+                    mFragmentManager
+                            .beginTransaction()
+                            .show(mPasswordSettingFragment)
+                            .hide(mVideoSettingFragment)
+                            .commit();
+                else
+                    mFragmentManager
+                            .beginTransaction()
+                            .hide(mVideoSettingFragment)
+                            .add(R.id.configure_content, mPasswordSettingFragment)
+                            .commit();
                 break;
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        VideoSettingFragment.isInitDevice = false;
     }
 }

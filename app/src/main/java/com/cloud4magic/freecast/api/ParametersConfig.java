@@ -97,6 +97,7 @@ public class ParametersConfig {
                 }
                 response.statusCode = 200;
                 Logger.e("xmzd", "body: " + response.body);
+                Logger.e("Misuzu", "body: " + response.body);
             } catch (Exception e) {
                 Logger.e("xmzd", "error: " + e.toString());
             }
