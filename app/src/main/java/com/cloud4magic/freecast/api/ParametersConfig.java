@@ -2,7 +2,6 @@ package com.cloud4magic.freecast.api;
 
 import android.os.AsyncTask;
 import android.util.Base64;
-import android.util.Log;
 
 import com.cloud4magic.freecast.utils.Logger;
 
@@ -99,7 +98,7 @@ public class ParametersConfig {
                 response.statusCode = 200;
                 Logger.e("xmzd", "body: " + response.body);
             } catch (Exception e) {
-                Log.e("xmzd", "error: " + e.toString());
+                Logger.e("xmzd", "error: " + e.toString());
             }
             return response;
         }

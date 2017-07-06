@@ -82,7 +82,7 @@ public class PlayerActivity extends AppCompatActivity {
     private int mFps = 24;
     private String mVersion = "";
     // hardware decode SurfaceView: 2, software decode SurfaceView: 0, software decode TextureView: 1
-    private int mDecoderType = 0;
+    private int mDecoderType = 2;
     // H264: 0, MJPEG: 1
     private int mVideoType = 0;
     // single screen: 1, two screens: 2
@@ -762,11 +762,18 @@ public class PlayerActivity extends AppCompatActivity {
         mModule.setModuleIp(mDeviceIp);
         mController = mModule.getController();
         mPlayer = mModule.getPlayer();
-        mPlayer.setRecordFrameRate(6);
+        mPlayer.setEnableHardwareDecoder(true);
+        mPlayer.setRecordFrameRate(mFps);
         mPlayer.setAudioOutput(mOpenVoice);
         mRecording = mPlayer.isRecording();
         mPlayer.setDisplayView(getApplication(), mDisplayView, null, mDecoderType);
         mPlayer.setTimeout(20000);
+        mPlayer.setOnH264UpdateListener(new Player.OnH264UpdateListener() {
+            @Override
+            public void onH264Updated(int i, int i1, int i2, byte[] bytes) {
+                Logger.e("xmzd", "onH264Updated: " + i + "-" + i1 + "-" + i2 + "-" + bytes);
+            }
+        });
         // play video timeout
         mPlayer.setOnTimeoutListener(new Player.OnTimeoutListener() {
             @Override
@@ -774,14 +781,14 @@ public class PlayerActivity extends AppCompatActivity {
                 // TODO player timeout
             }
         });
-        // state changed on playing
+        // state changed while playing
         mPlayer.setOnStateChangedListener(new Player.OnStateChangedListener() {
             @Override
             public void onStateChanged(Enums.State state) {
                 updateState(state);
             }
         });
-        // state changed on recording
+        // state changed while recording
         mPlayer.setOnRecordStateChangedListener(new Player.OnRecordStateChangedListener() {
             @Override
             public void onStateChanged(boolean b) {
@@ -977,6 +984,7 @@ public class PlayerActivity extends AppCompatActivity {
 
     /**
      * video image quality: resolution, fps, bitRate(not support now)
+     * resolution: 0--QVGA(320X240)	1--VGA(640X480)		2--720P(1280X720)	3--1080P(1920X1080)
      */
     private void setVideoQuality(int resolution, int fps, int bitRate) {
         mFps = fps;
@@ -989,7 +997,7 @@ public class PlayerActivity extends AppCompatActivity {
                 mPlayer.setImageSize(1280, 720);
                 break;
             case 1:
-                mPlayer.setImageSize(800, 480);
+                mPlayer.setImageSize(640, 480);
                 break;
             case 0:
                 mPlayer.setImageSize(320, 240);
@@ -1046,7 +1054,7 @@ public class PlayerActivity extends AppCompatActivity {
             }
             mPathRecord = mPathVideo + "/VIDEO_" + getFileName() + ".mp4";
             // beginRecord0: ffmpeg  beginRecord1: mp4v2
-            if (mPlayer.beginRecord0(mPathVideo, "/VIDEO_" + getFileName())) {
+            if (mPlayer.beginRecord(mPathVideo, "/VIDEO_" + getFileName())) {
                 if (mSoundPool != null) {
                     mSoundPool.play(mVoiceStartRecord, 1, 1, 0, 0, 1);
                 }
