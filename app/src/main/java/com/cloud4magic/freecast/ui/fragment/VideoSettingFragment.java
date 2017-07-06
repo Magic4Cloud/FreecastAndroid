@@ -15,6 +15,7 @@ import com.cloud4magic.freecast.api.ParametersConfig;
 import com.cloud4magic.freecast.utils.Logger;
 import com.cloud4magic.freecast.utils.ToastUtil;
 import com.cloud4magic.freecast.widget.BubbleSeekBar;
+import com.cloud4magic.freecast.widget.LoadingDialogFragment;
 import com.demo.sdk.Scanner;
 
 import org.json.JSONException;
@@ -53,6 +54,7 @@ public class VideoSettingFragment extends Fragment {
     BubbleSeekBar mFrameRateSeekbar;
     @BindView(R.id.modify_button)
     TextView mModifyButton;
+    LoadingDialogFragment mLoadingDialogFragment;
     View lastViewSelected;
     Unbinder unbinder;
     int fps;
@@ -64,7 +66,7 @@ public class VideoSettingFragment extends Fragment {
     public static String mDeviceIp = "";
     private String mDeviceName = "";
     private String mDevicePassword = "";
-    public static boolean  mInitDevice = false;
+    public static boolean  isInitDevice = false;
 
 
     private ParametersConfig mParametersConfig = null;
@@ -87,6 +89,8 @@ public class VideoSettingFragment extends Fragment {
         mBitrateSeekbar.setUnit("m");
         mFrameRateSeekbar.setUnit("fps");
         mBitrateSeekbar.setProgress(2);
+        mLoadingDialogFragment = LoadingDialogFragment.newInstance();
+        mLoadingDialogFragment.show(getActivity().getFragmentManager(),"");
         switchCheck(mSmoothPart);
         scanDevice();
         setOnProgressChange();
@@ -97,7 +101,7 @@ public class VideoSettingFragment extends Fragment {
      * scan device
      */
     private void scanDevice() {
-        if (mInitDevice) {
+        if (isInitDevice) {
             return;
         }
         Scanner scanner = new Scanner(getContext());
@@ -123,23 +127,24 @@ public class VideoSettingFragment extends Fragment {
                             Logger.e("Misuzu", "device ip: " + mDeviceIp);
                             Logger.e("Misuzu", "device name: " + mDeviceName);
                             found = true;
-                            mInitDevice = true;
+                            isInitDevice = true;
                             connectDevice();
                             break;
                         }
                     }
                     if (!found) {
                         ToastUtil.show(MyAplication.INSTANCE, MyAplication.INSTANCE.getString(R.string.device_not_found));
+                        mLoadingDialogFragment.dismiss();
                     }
                 } else {
                     // device not found
                     ToastUtil.show(MyAplication.INSTANCE, MyAplication.INSTANCE.getString(R.string.device_not_found));
+                    mLoadingDialogFragment.dismiss();
                 }
             }
         });
         scanner.scanAll();
     }
-
 
 
     /**
@@ -256,6 +261,7 @@ public class VideoSettingFragment extends Fragment {
         {
             switchCheck(mCustomPart);
         }
+        mLoadingDialogFragment.dismiss();
     }
 
 
@@ -284,7 +290,7 @@ public class VideoSettingFragment extends Fragment {
     @OnClick(R.id.modify_button)
     public void onModifyButtonClicked(View view)
     {
-        if (mInitDevice && mParametersConfig != null)
+        if (isInitDevice && mParametersConfig != null)
         {
             mParametersConfig.setFps(0,fps);
             mParametersConfig.setQuality(0,getQuality(bitRate));

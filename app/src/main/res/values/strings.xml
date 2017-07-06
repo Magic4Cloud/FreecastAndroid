@@ -41,4 +41,5 @@
     <string name="input_comfirm">Please input comfirm password</string>
     <string name="input_not_consistent">Two input password must be consistent</string>
     <string name="modify_password_sucess">Set password success!</string>
+    <string name="reset_password_sucess">Reset password success!</string>
 </resources>

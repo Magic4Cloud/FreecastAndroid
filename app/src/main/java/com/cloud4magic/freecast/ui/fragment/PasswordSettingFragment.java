@@ -1,5 +1,10 @@
 package com.cloud4magic.freecast.ui.fragment;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,6 +20,7 @@ import android.widget.TextView;
 import com.cloud4magic.freecast.MyAplication;
 import com.cloud4magic.freecast.R;
 import com.cloud4magic.freecast.api.ParametersConfig;
+import com.cloud4magic.freecast.api.WLANAPI;
 import com.cloud4magic.freecast.utils.Logger;
 import com.cloud4magic.freecast.utils.ToastUtil;
 
@@ -27,8 +33,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
+import static com.cloud4magic.freecast.ui.fragment.VideoSettingFragment.isInitDevice;
 import static com.cloud4magic.freecast.ui.fragment.VideoSettingFragment.mDeviceIp;
-import static com.cloud4magic.freecast.ui.fragment.VideoSettingFragment.mInitDevice;
 
 /**
  * 密码设置
@@ -58,6 +64,8 @@ public class PasswordSettingFragment extends Fragment {
     TextView mModifyButton;
     @BindView(R.id.forgot_password_button)
     TextView mForgotPasswordButton;
+    boolean isForgotClicked;
+    boolean isPrepare;
     Unbinder unbinder;
 
     private ParametersConfig mParametersConfig = null;
@@ -68,19 +76,31 @@ public class PasswordSettingFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_password_setting_layout, container, false);
         unbinder = ButterKnife.bind(this, view);
+        isPrepare = true;
+        getActivity().registerReceiver(mWifiChangedReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+        getWifiConnection();
         initView();
         return view;
     }
 
     private void initView()
     {
-        if (mInitDevice)
+        if (isInitDevice)
         {
             mParametersConfig = new ParametersConfig(mDeviceIp + ":" + 80, mDevicePassword);
             mParametersConfig.setOnResultListener(mConfigListener);
             mParametersConfig.getUsernameAndPassword();
         }
     }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        Logger.e("Misuzu","hidden --->"+hidden);
+        if (!hidden)
+            initView();
+    }
+
 
     /**
      * ParametersConfig.OnResultListener
@@ -98,7 +118,13 @@ public class PasswordSettingFragment extends Fragment {
                     mCurrentPasswordEdit.setText(mDevicePassword);
                     break;
                 case ParametersConfig.UPDATE_USERNAME_PASSWORD:
-                    ToastUtil.show(MyAplication.INSTANCE,MyAplication.INSTANCE.getString(R.string.modify_password_sucess));
+                    if (isForgotClicked)
+                    {
+                        ToastUtil.show(MyAplication.INSTANCE,MyAplication.INSTANCE.getString(R.string.reset_password_sucess));
+                        isForgotClicked = false;
+                    }
+                    else
+                        ToastUtil.show(MyAplication.INSTANCE,MyAplication.INSTANCE.getString(R.string.modify_password_sucess));
                     mComfirmEdit.setText("");
                     mNewPasswordEdit.setText("");
                     mCurrentPasswordEdit.setText(mDevicePassword);
@@ -160,7 +186,7 @@ public class PasswordSettingFragment extends Fragment {
     @OnClick(R.id.modify_button)
     public void onModifyButtonClicked(View view)
     {
-        if (mInitDevice && mParametersConfig != null)
+        if (isInitDevice && mParametersConfig != null)
         {
             submit();
         }else
@@ -168,6 +194,20 @@ public class PasswordSettingFragment extends Fragment {
             ToastUtil.show(MyAplication.INSTANCE, MyAplication.INSTANCE.getString(R.string.plz_connect));
         }
 
+    }
+
+    @OnClick(R.id.forgot_password_button)
+    public void onForgotPassWordClicked(View view)
+    {
+        if (isInitDevice && mParametersConfig != null)
+        {
+            isForgotClicked = true;
+            mParametersConfig.updateUsernameAndPassword("admin","admin");
+            mDevicePassword = "admin";
+        }else
+        {
+            ToastUtil.show(MyAplication.INSTANCE, MyAplication.INSTANCE.getString(R.string.plz_connect));
+        }
     }
 
     /**
@@ -210,5 +250,42 @@ public class PasswordSettingFragment extends Fragment {
             editText.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
         }
         editText.setSelection(editText.getText().toString().length());
+    }
+
+    /**
+     * broadcastReceiver, when wifi connection changed
+     */
+    private BroadcastReceiver mWifiChangedReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            getWifiConnection();
+        }
+    };
+
+    /**
+     * wifi connection
+     */
+    private void getWifiConnection() {
+        WLANAPI wlanapi = new WLANAPI(getContext());
+        String ssid = wlanapi.getSSID();
+        if (!"NULL".equals(ssid) && !TextUtils.isEmpty(ssid) && ssid.length() > 2) {
+            ssid = ssid.substring(1, ssid.length() - 1);
+            if (!"NULL".equals(ssid) && !TextUtils.isEmpty(ssid) && !ssid.contains("unknown ssid")) {
+                mWifiSsid.setText(ssid);
+                mWifiStatus.setSelected(true);
+            } else {
+                mWifiSsid.setText(getResources().getString(R.string.no_wifi));
+                mWifiStatus.setSelected(false);
+            }
+        } else {
+            mWifiSsid.setText(getResources().getString(R.string.no_wifi));
+            mWifiStatus.setSelected(false);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        getActivity().unregisterReceiver(mWifiChangedReceiver);
     }
 }

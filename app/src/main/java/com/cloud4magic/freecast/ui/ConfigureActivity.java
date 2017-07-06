@@ -88,4 +88,10 @@ public class ConfigureActivity extends AppCompatActivity {
                 break;
         }
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        VideoSettingFragment.isInitDevice = false;
+    }
 }
