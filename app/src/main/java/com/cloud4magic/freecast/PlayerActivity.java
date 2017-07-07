@@ -28,6 +28,7 @@ import com.cloud4magic.freecast.api.ParametersConfig;
 import com.cloud4magic.freecast.api.RemoteTunnel;
 import com.cloud4magic.freecast.api.WLANAPI;
 import com.cloud4magic.freecast.component.DeviceEntity;
+import com.cloud4magic.freecast.ui.ConfigureActivity;
 import com.cloud4magic.freecast.utils.Logger;
 import com.cloud4magic.freecast.utils.ToastUtil;
 import com.demo.sdk.Controller;
@@ -52,7 +53,6 @@ import java.util.TimeZone;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.OnTouch;
 import butterknife.Unbinder;
 
 /**
@@ -217,12 +217,7 @@ public class PlayerActivity extends AppCompatActivity {
             mContentView.setVisibility(View.VISIBLE);
         }
         setOptionBottomEnable(true);
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                hideOptionView();
-            }
-        }, 2000);
+        hideOptionView();
     }
 
     @OnClick(R.id.player_back)
@@ -230,22 +225,28 @@ public class PlayerActivity extends AppCompatActivity {
         finish();
     }
 
-    @OnTouch(R.id.player_content)
-    protected boolean actionShowOptionView() {
+    @OnClick(R.id.player_filter)
+    protected void actionShowOptionView() {
         if (mOptionShowing) {
-            return true;
+            hideOptionView();
+            mOptionShowing = false;
+            return;
         }
+        mHandler.removeCallbacks(mHideRunnable);
         mOptionShowing = true;
         showOptionView();
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
+        mHandler.postDelayed(mHideRunnable, 5000);
+    }
+
+    private Runnable mHideRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (mOptionShowing) {
                 hideOptionView();
                 mOptionShowing = false;
             }
-        }, 5000);
-        return true;
-    }
+        }
+    };
 
     /**
      * show option view with animation
@@ -1074,7 +1075,8 @@ public class PlayerActivity extends AppCompatActivity {
 
     @OnClick(R.id.player_config)
     protected void actionConfig() {
-        // TODO: 2017/6/30 jump to config page
+        // jump to config page
+        startActivity(new Intent(PlayerActivity.this, ConfigureActivity.class));
     }
 
     /**
