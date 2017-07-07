@@ -82,7 +82,7 @@ public class PlayerActivity extends AppCompatActivity {
     private int mFps = 24;
     private String mVersion = "";
     // hardware decode SurfaceView: 2, software decode SurfaceView: 0, software decode TextureView: 1
-    private int mDecoderType = 2;
+    private int mDecoderType = 0;
     // H264: 0, MJPEG: 1
     private int mVideoType = 0;
     // single screen: 1, two screens: 2
@@ -300,11 +300,11 @@ public class PlayerActivity extends AppCompatActivity {
      * create dir on SDCard
      */
     private void createSDCardDir() {
-        String root = "/Freecast";
-        String photo = "/Freecast/Photo";
-        String video = "/Freecast/Video";
-        String voice = "/Freecast/Voice";
-        String playback = "/Freecast/Playback";
+        String root = "/FREESTREAM";
+        String photo = "/FREESTREAM/Photo";
+        String video = "/FREESTREAM/Video";
+        String voice = "/FREESTREAM/Voice";
+        String playback = "/FREESTREAM/Playback";
         // sd root
         File sdcardDir = Environment.getExternalStorageDirectory();
         // make root dir

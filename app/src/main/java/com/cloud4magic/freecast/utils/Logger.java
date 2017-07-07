@@ -9,7 +9,7 @@ import android.util.Log;
 
 public class Logger {
 
-    private static String APP_NAME = "Freecast-";
+    private static String APP_NAME = "FREESTREAM-";
     private static boolean LOG_E = true;
     private static boolean LOG_W = true;
     private static boolean LOG_I = true;
