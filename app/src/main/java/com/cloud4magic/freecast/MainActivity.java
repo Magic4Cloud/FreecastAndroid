@@ -17,6 +17,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.cloud4magic.freecast.ui.ConfigureActivity;
+import com.cloud4magic.freecast.ui.DeclareActivity;
 import com.cloud4magic.freecast.utils.Fglass;
 import com.cloud4magic.freecast.utils.StatusBarUtil;
 
@@ -148,10 +149,13 @@ public class MainActivity extends AppCompatActivity {
             case R.id.version:
                 break;
             case R.id.disclaimer:
+                DeclareActivity.startActivity(this,0);
                 break;
             case R.id.privacy_policy:
+                DeclareActivity.startActivity(this,1);
                 break;
             case R.id.copyright:
+                DeclareActivity.startActivity(this,2);
                 break;
         }
         mDrawerLayout.closeDrawer(GravityCompat.START);
