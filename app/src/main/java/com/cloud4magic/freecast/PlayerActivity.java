@@ -83,7 +83,7 @@ public class PlayerActivity extends AppCompatActivity {
     private int mFps = 24;
     private String mVersion = "";
     // hardware decode SurfaceView: 2, software decode SurfaceView: 0, software decode TextureView: 1
-    private int mDecoderType = 2;
+    private int mDecoderType = 0;
     // H264: 0, MJPEG: 1
     private int mVideoType = 0;
     // single screen: 1, two screens: 2
