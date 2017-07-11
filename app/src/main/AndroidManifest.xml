@@ -53,6 +53,7 @@
             android:theme="@style/AppTheme.NoActionBar"/>
 
         <activity android:name=".ui.DeclareActivity"/>
+        <activity android:name=".ui.VersionActivity"/>
     </application>
 
 </manifest>
