@@ -29,6 +29,7 @@ import com.cloud4magic.freecast.api.RemoteTunnel;
 import com.cloud4magic.freecast.api.WLANAPI;
 import com.cloud4magic.freecast.component.DeviceEntity;
 import com.cloud4magic.freecast.ui.ConfigureActivity;
+import com.cloud4magic.freecast.ui.LibraryActivity;
 import com.cloud4magic.freecast.utils.Logger;
 import com.cloud4magic.freecast.utils.ToastUtil;
 import com.demo.sdk.Controller;
@@ -82,7 +83,7 @@ public class PlayerActivity extends AppCompatActivity {
     private int mFps = 24;
     private String mVersion = "";
     // hardware decode SurfaceView: 2, software decode SurfaceView: 0, software decode TextureView: 1
-    private int mDecoderType = 0;
+    private int mDecoderType = 2;
     // H264: 0, MJPEG: 1
     private int mVideoType = 0;
     // single screen: 1, two screens: 2
@@ -983,30 +984,6 @@ public class PlayerActivity extends AppCompatActivity {
         mParametersConfig.setOnResultListener(mConfigListener);
     }
 
-    /**
-     * video image quality: resolution, fps, bitRate(not support now)
-     * resolution: 0--QVGA(320X240)	1--VGA(640X480)		2--720P(1280X720)	3--1080P(1920X1080)
-     */
-    private void setVideoQuality(int resolution, int fps, int bitRate) {
-        mFps = fps;
-        mPlayer.setRecordFrameRate(mFps);
-        switch (resolution) {
-            case 3:
-                mPlayer.setImageSize(1920, 1080);
-                break;
-            case 2:
-                mPlayer.setImageSize(1280, 720);
-                break;
-            case 1:
-                mPlayer.setImageSize(640, 480);
-                break;
-            case 0:
-                mPlayer.setImageSize(320, 240);
-                break;
-        }
-        mParametersConfig.setResolution(0, resolution);
-    }
-
     @OnClick(R.id.player_take_photo)
     protected void actionTakePhoto() {
         if (mPlayer == null || mPlayer.getState() != Enums.State.PLAYING) {
@@ -1070,7 +1047,8 @@ public class PlayerActivity extends AppCompatActivity {
 
     @OnClick(R.id.player_library)
     protected void actionLibrary() {
-        // TODO: 2017/6/30 jump to library page
+        // jump to library page
+        startActivity(new Intent(PlayerActivity.this, LibraryActivity.class));
     }
 
     @OnClick(R.id.player_config)

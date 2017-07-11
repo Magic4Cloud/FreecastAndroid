@@ -18,4 +18,6 @@
     <color name="divider_color">#939598</color>
     <color name="menu_bg">#202020</color>
     <color name="menu_text">#00b2e1</color>
+    <color name="text_library">#636466</color>
+    <color name="bg_library">#f4f4f5</color>
 </resources>

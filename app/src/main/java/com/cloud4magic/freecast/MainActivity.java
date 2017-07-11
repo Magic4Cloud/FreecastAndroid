@@ -17,6 +17,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.cloud4magic.freecast.ui.ConfigureActivity;
+import com.cloud4magic.freecast.ui.LibraryActivity;
 import com.cloud4magic.freecast.utils.Fglass;
 import com.cloud4magic.freecast.utils.StatusBarUtil;
 
@@ -119,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, ConfigureActivity.class));
                 break;
             case R.id.main_browse:  // 图片和视频
+                startActivity(new Intent(MainActivity.this, LibraryActivity.class));
                 break;
             case R.id.side_menu:
                 mDrawerLayout.openDrawer(GravityCompat.START);

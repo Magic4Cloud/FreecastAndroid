@@ -42,4 +42,8 @@
     <string name="input_not_consistent">Two input password must be consistent</string>
     <string name="modify_password_sucess">Set password success!</string>
     <string name="reset_password_sucess">Reset password success!</string>
+    <string name="library_photo">Photo</string>
+    <string name="library_videos">Videos</string>
+    <string name="library_select">Select</string>
+    <string name="library_cancel">Cancel</string>
 </resources>
