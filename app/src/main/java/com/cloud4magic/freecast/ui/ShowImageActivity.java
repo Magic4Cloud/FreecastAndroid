@@ -1,4 +1,4 @@
-package com.cloud4magic.freecast.ui.fragment;
+package com.cloud4magic.freecast.ui;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
