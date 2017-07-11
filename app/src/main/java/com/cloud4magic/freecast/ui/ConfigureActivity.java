@@ -44,7 +44,7 @@ public class ConfigureActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_configure_layout);
         ButterKnife.bind(this);
-
+        
         mVideoSettingFragment = VideoSettingFragment.newInstance();
         mPasswordSettingFragment = PasswordSettingFragment.newInstance();
 
