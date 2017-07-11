@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/gray_bg"
+              android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#ffff"
+        >
+
+        <ImageView
+            android:id="@+id/declare_back"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:padding="10dp"
+            android:src="@drawable/ic_back"/>
+
+        <TextView
+            android:id="@+id/declare_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:text="@string/version"
+            android:textColor="@color/text_blue"
+            android:textSize="18.7sp"
+            />
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="50dp"
+        android:src="@mipmap/ic_logo"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="15dp"
+        android:text="@string/freestream2"
+        android:textColor="@color/text_normal"
+        android:textSize="13sp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="70dp"
+        android:text="@string/transmitter_id"
+        android:textColor="@color/text_normal"
+        android:textSize="13sp"/>
+
+    <TextView
+        android:id="@+id/device_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/text_normal"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        tools:text="012321312123"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="30dp"
+        android:text="@string/transmitter_ip"
+        android:textColor="@color/text_normal"
+        android:textSize="13sp"/>
+
+    <TextView
+        android:id="@+id/device_ip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/text_normal"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        tools:text="172.222.222.2"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginTop="60dp"
+        android:background="@drawable/shape_selection_bg"
+        android:orientation="vertical">
+
+        <com.cloud4magic.freecast.widget.ImageTextView
+            android:id="@+id/check_firmware"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:padding="10dp"
+            android:text="@string/firmware_update"
+            android:textColor="@color/text_blue"
+            android:textSize="12sp"
+            app:drawable="@drawable/icon_right"
+            app:drawableHeight="6dp"
+            app:drawableWidth="6dp"
+            app:position="3"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/text_logo"/>
+
+        <com.cloud4magic.freecast.widget.ImageTextView
+            android:id="@+id/check_version"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:padding="10dp"
+            android:text="@string/check_version"
+            android:textColor="@color/text_blue"
+            android:textSize="12sp"
+            app:drawable="@drawable/icon_right"
+            app:drawableHeight="6dp"
+            app:drawableWidth="6dp"
+            app:position="3"
+            />
+    </LinearLayout>
+
+</LinearLayout>

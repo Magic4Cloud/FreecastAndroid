@@ -42,4 +42,10 @@
     <string name="input_not_consistent">Two input password must be consistent</string>
     <string name="modify_password_sucess">Set password success!</string>
     <string name="reset_password_sucess">Reset password success!</string>
+    <string name="freestream2">FreeStream 2.0</string>
+    <string name="transmitter_id">Transmitter Device ID:</string>
+    <string name="transmitter_ip">Transmitter IP Address:</string>
+    <string name="firmware_update">Firmware Update</string>
+    <string name="check_version">Check for new version</string>
+    <string name="switch_wifi">Please switch the device wifi to common wifi</string>
 </resources>

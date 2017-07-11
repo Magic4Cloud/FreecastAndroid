@@ -18,6 +18,7 @@ import android.widget.ImageView;
 
 import com.cloud4magic.freecast.ui.ConfigureActivity;
 import com.cloud4magic.freecast.ui.DeclareActivity;
+import com.cloud4magic.freecast.ui.VersionActivity;
 import com.cloud4magic.freecast.utils.Fglass;
 import com.cloud4magic.freecast.utils.StatusBarUtil;
 
@@ -147,6 +148,7 @@ public class MainActivity extends AppCompatActivity {
 
         switch (view.getId()) {
             case R.id.version:
+                startActivity(new Intent(this, VersionActivity.class));
                 break;
             case R.id.disclaimer:
                 DeclareActivity.startActivity(this,0);
