@@ -52,4 +52,12 @@
     <string name="firmware_update">Firmware Update</string>
     <string name="check_version">Check for new version</string>
     <string name="switch_wifi">Please switch the device wifi to common wifi</string>
+    <string name="delete">Delete</string>
+    <string name="share">Share</string>
+    <string name="delete_no_photo">Please select one or more photos to delete</string>
+    <string name="delete_no_video">Please select one or more videos to delete</string>
+    <string name="delete_notice">Are you sure you want to delete it?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="delete_success">Delete success !</string>
 </resources>

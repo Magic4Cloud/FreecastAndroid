@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.cloud4magic.freecast.R;
@@ -29,12 +31,15 @@ public class LibraryActivity extends AppCompatActivity {
     TextView mVideoView;
     @BindView(R.id.library_edit)
     TextView mEditView;
+    @BindView(R.id.library_bottom)
+    RelativeLayout mBottomView;
 
     private FragmentManager mFragmentManager;
     private PhotoFragment mPhotoFragment;
     private VideoFragment mVideoFragment;
 
     private boolean mSelected = false;
+    private boolean mIsPhoto = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -46,6 +51,7 @@ public class LibraryActivity extends AppCompatActivity {
         mPhotoFragment = PhotoFragment.getInstance();
         mVideoFragment = VideoFragment.getInstance();
         // default select PhotoFragment
+        mIsPhoto = true;
         mPhotoView.setSelected(true);
         mVideoView.setSelected(false);
         mFragmentManager.beginTransaction().add(R.id.library_content, mPhotoFragment).commit();
@@ -59,13 +65,22 @@ public class LibraryActivity extends AppCompatActivity {
 
     @OnClick(R.id.library_photo)
     protected void actionPhoto() {
+        if (mIsPhoto) {
+            return;
+        }
+        mIsPhoto = true;
         mPhotoView.setSelected(true);
         mVideoView.setSelected(false);
         mFragmentManager.beginTransaction().show(mPhotoFragment).hide(mVideoFragment).commit();
+        resetSelect();
     }
 
     @OnClick(R.id.library_video)
     protected void actionVideo() {
+        if (!mIsPhoto) {
+            return;
+        }
+        mIsPhoto = false;
         mVideoView.setSelected(true);
         mPhotoView.setSelected(false);
         if (mVideoFragment.isAdded()) {
@@ -73,7 +88,7 @@ public class LibraryActivity extends AppCompatActivity {
         } else {
             mFragmentManager.beginTransaction().hide(mPhotoFragment).add(R.id.library_content, mVideoFragment).commit();
         }
-
+        resetSelect();
     }
 
     @OnClick(R.id.library_edit)
@@ -85,6 +100,32 @@ public class LibraryActivity extends AppCompatActivity {
         }
     }
 
+    @OnClick(R.id.library_delete)
+    protected void actionDelete() {
+        if (mIsPhoto) {
+            if (mPhotoFragment != null) {
+                mPhotoFragment.delete();
+            }
+        } else {
+            if (mVideoFragment != null) {
+                mVideoFragment.delete();
+            }
+        }
+    }
+
+    @OnClick(R.id.library_share)
+    protected void actionShare() {
+        if (mIsPhoto) {
+            if (mPhotoFragment != null) {
+                mPhotoFragment.share();
+            }
+        } else {
+            if (mVideoFragment != null) {
+                mVideoFragment.share();
+            }
+        }
+    }
+
     /**
      * select enable
      */
@@ -92,6 +133,9 @@ public class LibraryActivity extends AppCompatActivity {
         mEditView.setText(getResources().getString(R.string.library_cancel));
         mEditView.setSelected(true);
         mSelected = true;
+        if (mBottomView != null) {
+            mBottomView.setVisibility(View.VISIBLE);
+        }
         notifyAdapter();
     }
 
@@ -102,20 +146,44 @@ public class LibraryActivity extends AppCompatActivity {
         mEditView.setText(getResources().getString(R.string.library_select));
         mEditView.setSelected(false);
         mSelected = false;
+        if (mBottomView != null) {
+            mBottomView.setVisibility(View.GONE);
+        }
         notifyAdapter();
     }
 
+    /**
+     * notify MediaAdapter
+     */
     private void notifyAdapter() {
-        if (mPhotoView.isSelected() && !mVideoView.isSelected()) {
+        if (mIsPhoto) {
             // PhotoFragment
             if (mPhotoFragment != null) {
                 mPhotoFragment.setSelect(mSelected);
             }
-        } else if (!mPhotoView.isSelected() && mVideoView.isSelected()) {
+        } else {
             // VideoFragment
             if (mVideoFragment != null) {
                 mVideoFragment.setSelect(mSelected);
             }
+        }
+    }
+
+    /**
+     * reset select
+     */
+    private void resetSelect() {
+        mEditView.setText(getResources().getString(R.string.library_select));
+        mEditView.setSelected(false);
+        mSelected = false;
+        if (mBottomView != null) {
+            mBottomView.setVisibility(View.GONE);
+        }
+        if (mPhotoFragment != null) {
+            mPhotoFragment.setSelect(false);
+        }
+        if (mVideoFragment != null) {
+            mVideoFragment.setSelect(false);
         }
     }
 

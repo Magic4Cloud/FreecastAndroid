@@ -1,13 +1,14 @@
 package com.cloud4magic.freecast.ui.fragment;
 
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
@@ -17,10 +18,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.cloud4magic.freecast.R;
-import com.cloud4magic.freecast.adapter.PhotoAdapter;
+import com.cloud4magic.freecast.adapter.MediaAdapter;
 import com.cloud4magic.freecast.bean.LibraryBean;
-import com.cloud4magic.freecast.bean.PhotoBean;
+import com.cloud4magic.freecast.bean.MediaBean;
+import com.cloud4magic.freecast.ui.ShowImageActivity;
 import com.cloud4magic.freecast.utils.Logger;
+import com.cloud4magic.freecast.utils.ToastUtil;
 
 import java.io.File;
 import java.lang.ref.SoftReference;
@@ -41,8 +44,10 @@ public class PhotoFragment extends Fragment {
     private Unbinder mUnbinder;
     @BindView(R.id.recycle_view)
     RecyclerView mRecyclerView;
-    private List<PhotoBean> mList;
-    private PhotoAdapter mAdapter;
+    private List<MediaBean> mList;
+    private MediaAdapter mAdapter;
+    private List<String> mSelectedData;
+    private AlertDialog mAlertDialog;
 
     private static final int LOAD_SUCCESS = 100;
     private MyHandler mHandler;
@@ -63,7 +68,6 @@ public class PhotoFragment extends Fragment {
             }
             switch (msg.what) {
                 case LOAD_SUCCESS:
-                    Logger.d("xmzd", "load success ");
                     if (fragment.mAdapter != null) {
                         fragment.mAdapter.setData(fragment.mList);
                     }
@@ -88,26 +92,42 @@ public class PhotoFragment extends Fragment {
         mHandler = new MyHandler(this);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), OrientationHelper.VERTICAL, false);
         mRecyclerView.setLayoutManager(layoutManager);
-        mAdapter = new PhotoAdapter(getContext());
-        mAdapter.setOnItemClickListener(new PhotoAdapter.OnItemClickListener() {
+        mAdapter = new MediaAdapter(getContext());
+        mAdapter.setOnItemClickListener(new MediaAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position, String path) {
                 if (TextUtils.isEmpty(path)) {
                     return;
                 }
-                File file = new File(path);
+                /*File file = new File(path);
                 Intent intent = new Intent();
                 intent.setAction(Intent.ACTION_VIEW);
-                intent.setDataAndType(Uri.fromFile(file), "image/*");
-                startActivity(intent);
-                /*Intent intent = new Intent(getActivity(), ShowImageActivity.class);
-                intent.putExtra(ShowImageActivity.INTENT_FLAG_PATH, path);
+                intent.setDataAndType(Uri.fromFile(file), "image*//*");
                 startActivity(intent);*/
+                Intent intent = new Intent(getActivity(), ShowImageActivity.class);
+                intent.putExtra(ShowImageActivity.INTENT_FLAG_PATH, path);
+                startActivity(intent);
             }
 
             @Override
             public void onItemSelected(boolean selected, int position, String path) {
-                Logger.e("xmzd", " " + selected + " --- " + path + " --- " + position);
+                if (TextUtils.isEmpty(path)) {
+                    return;
+                }
+                if (mSelectedData == null) {
+                    mSelectedData = new ArrayList<String>();
+                }
+                if (selected) {
+                    // add to list
+                    if (!mSelectedData.contains(path)) {
+                        mSelectedData.add(path);
+                    }
+                } else {
+                    // remove form list
+                    if (mSelectedData.contains(path)) {
+                        mSelectedData.remove(path);
+                    }
+                }
             }
         });
         mRecyclerView.setAdapter(mAdapter);
@@ -119,6 +139,57 @@ public class PhotoFragment extends Fragment {
         if (mAdapter != null) {
             mAdapter.setSelect(select);
         }
+    }
+
+    /**
+     * delete photo from sd
+     */
+    public void delete() {
+        if (mSelectedData == null || mSelectedData.size() == 0) {
+            ToastUtil.show(getContext(), getResources().getString(R.string.delete_no_photo));
+            return;
+        }
+        if (mAlertDialog == null) {
+            mAlertDialog = getAlertDialog();
+        }
+        mAlertDialog.show();
+    }
+
+    /**
+     * share photo to other platforms
+     */
+    public void share() {
+
+    }
+
+    /**
+     * create AlertDialog
+     */
+    private AlertDialog getAlertDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setMessage(R.string.delete_notice);
+        builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                for (String path : mSelectedData) {
+                    if (!TextUtils.isEmpty(path)) {
+                        File file = new File(path);
+                        if (file.exists()) {
+                            file.delete();
+                        }
+                    }
+                }
+                ToastUtil.show(getContext(), getResources().getString(R.string.delete_success));
+                loadPhoto();
+            }
+        });
+        return builder.create();
     }
 
     /**
@@ -153,7 +224,7 @@ public class PhotoFragment extends Fragment {
             Logger.e("xmzd", "photo is not found in the path");
             return;
         }
-        mList = new ArrayList<PhotoBean>();
+        mList = new ArrayList<MediaBean>();
         List<String> keys = new ArrayList<String>();
         List<LibraryBean> beans = new ArrayList<LibraryBean>();
         for (File file : files) {
@@ -180,10 +251,10 @@ public class PhotoFragment extends Fragment {
                     }
                 }
                 if (list.size() > 0) {
-                    PhotoBean photoBean = new PhotoBean();
-                    photoBean.setName(key);
-                    photoBean.setList(list);
-                    mList.add(photoBean);
+                    MediaBean mediaBean = new MediaBean();
+                    mediaBean.setName(key);
+                    mediaBean.setList(list);
+                    mList.add(mediaBean);
                 }
             }
         }

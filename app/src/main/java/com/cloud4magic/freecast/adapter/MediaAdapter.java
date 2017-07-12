@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.cloud4magic.freecast.R;
-import com.cloud4magic.freecast.bean.PhotoBean;
+import com.cloud4magic.freecast.bean.MediaBean;
 import com.cloud4magic.freecast.widget.decoration.GridItemDecoration;
 
 import java.util.List;
@@ -24,16 +24,16 @@ import butterknife.ButterKnife;
  * Date    2017/7/10
  * Author  xiaomao
  */
-public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ItemViewHolder> {
+public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ItemViewHolder> {
 
     private Context mContext;
-    private List<PhotoBean> mList;
+    private List<MediaBean> mList;
     private boolean mSelect = false;
     private OnItemClickListener mListener;
 
     private GridItemDecoration mDecoration;
 
-    public PhotoAdapter(Context context) {
+    public MediaAdapter(Context context) {
         mContext = context;
         mDecoration = new GridItemDecoration(context);
     }
@@ -75,7 +75,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ItemViewHold
             ButterKnife.bind(this, itemView);
         }
 
-        void setBean(PhotoBean bean) {
+        void setBean(MediaBean bean) {
             if (bean != null) {
                 textView.setText(bean.getName());
                 GridLayoutManager layoutManager = new GridLayoutManager(mContext, 3);
@@ -143,7 +143,11 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ItemViewHold
                 params.height = getItemWidth();
                 itemImage.setLayoutParams(params);
                 // show image
-                Glide.with(mContext).load(path).into(itemImage);
+                Glide.with(mContext)
+                        .load(path)
+                        .placeholder(R.drawable.shape_cover)
+                        .error(R.drawable.shape_cover)
+                        .into(itemImage);
                 itemImage.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -167,7 +171,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ItemViewHold
         }
     }
 
-    public void setData(List<PhotoBean> list) {
+    public void setData(List<MediaBean> list) {
         mList = list;
         notifyDataSetChanged();
     }
@@ -179,6 +183,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ItemViewHold
 
     public interface OnItemClickListener {
         void onItemClick(int position, String path);
+
         void onItemSelected(boolean selected, int position, String path);
     }
 

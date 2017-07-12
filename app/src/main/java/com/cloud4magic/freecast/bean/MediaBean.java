@@ -7,7 +7,7 @@ import java.util.List;
  * Author  xiaomao
  */
 
-public class PhotoBean {
+public class MediaBean {
 
     private String name;
     private List<String> list;
@@ -30,7 +30,7 @@ public class PhotoBean {
 
     @Override
     public String toString() {
-        return "PhotoBean{" +
+        return "MediaBean{" +
                 "name='" + name + '\'' +
                 ", list=" + list +
                 '}';

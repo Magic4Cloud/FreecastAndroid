@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
     <FrameLayout
+        android:id="@+id/library_title_bar"
         android:layout_width="match_parent"
         android:layout_height="50dp">
 
@@ -56,6 +56,72 @@
     <FrameLayout
         android:id="@+id/library_content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:layout_below="@+id/library_title_bar"/>
 
-</LinearLayout>
+    <RelativeLayout
+        android:id="@+id/library_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/bg_edit_library">
+
+        <LinearLayout
+            android:id="@+id/library_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:paddingTop="4dp"
+            android:paddingRight="16dp"
+            android:layout_toLeftOf="@+id/library_line"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/selector_delete"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/delete"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/text_gray"
+                android:textSize="10sp"/>
+
+        </LinearLayout>
+
+        <View
+            android:id="@+id/library_line"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"/>
+
+        <LinearLayout
+            android:id="@+id/library_share"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:paddingLeft="16dp"
+            android:paddingTop="4dp"
+            android:layout_toRightOf="@+id/library_line"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/selector_share"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/share"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/text_gray"
+                android:textSize="10sp"/>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</RelativeLayout>
