@@ -57,9 +57,7 @@
         android:id="@+id/library_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"/>
+        android:layout_below="@+id/library_title_bar"/>
 
     <RelativeLayout
         android:id="@+id/library_bottom"
