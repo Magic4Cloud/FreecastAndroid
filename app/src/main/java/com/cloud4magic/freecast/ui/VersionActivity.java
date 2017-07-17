@@ -54,10 +54,10 @@ public class VersionActivity extends AppCompatActivity {
     TextView mCheckVersion;
 
     private String mDeviceId = "";
-    public  String mDeviceIp = "";
+    public String mDeviceIp = "";
     private String mDeviceName = "";
     private String mDevicePassword = "";
-    public  boolean  isInitDevice = false;
+    public boolean isInitDevice = false;
     LoadingDialogFragment mLoadingDialogFragment;
 
 
@@ -69,11 +69,20 @@ public class VersionActivity extends AppCompatActivity {
         initView();
     }
 
-    private void initView()
-    {
+    private void initView() {
         mLoadingDialogFragment = LoadingDialogFragment.newInstance();
-        mLoadingDialogFragment.show(getFragmentManager(),"");
+        mLoadingDialogFragment.show(getFragmentManager(), "");
         scanDevice();
+//        File upgradeFile = new File(getExternalFilesDir(null) + File.separator + "upgrade.tar");
+//        String dirPath = getExternalFilesDir(null) + File.separator + "ungrade";
+//        try {
+////            TarManager.deTarArchive(upgradeFile, dirPath);
+//            FilesUtils filesUtils = new FilesUtils();
+//            filesUtils.getFileList(dirPath);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+
     }
 
 
@@ -153,7 +162,7 @@ public class VersionActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.cancel();
-                                launchAppDetail(getPackageName(),"");
+                                launchAppDetail(getPackageName(), "");
                             }
                         })
                         .setCancelable(false)
@@ -188,8 +197,7 @@ public class VersionActivity extends AppCompatActivity {
     /**
      * 获取下载链接 并下载文件
      */
-    private void getDownLoadLink()
-    {
+    private void getDownLoadLink() {
         RetrofitHelper.getInstance()
                 .getService()
                 .getDownloadLink("http://www.cv-hd.com/upgrade.txt")
@@ -255,7 +263,7 @@ public class VersionActivity extends AppCompatActivity {
 
                     fileSizeDownloaded += read;
 
-                    Logger.e("Misuzu", "file download: " + fileSizeDownloaded + " of " + fileSize+upgradeFile.getAbsolutePath());
+                    Logger.e("Misuzu", "file download: " + fileSizeDownloaded + " of " + fileSize + upgradeFile.getAbsolutePath());
                 }
 
                 outputStream.flush();
