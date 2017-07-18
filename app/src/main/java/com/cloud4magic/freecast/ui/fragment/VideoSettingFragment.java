@@ -85,9 +85,9 @@ public class VideoSettingFragment extends Fragment {
         mSmoothPart.setSelected(true);
         lastViewSelected = mSmoothPart;
         mResolutionSeekbar.isShowBubble(false);
-        mResolutionSeekbar.setUnit("p");
-        mBitrateSeekbar.setUnit("m");
-        mFrameRateSeekbar.setUnit("fps");
+        mResolutionSeekbar.setUnit("P");
+        mBitrateSeekbar.setUnit("M");
+        mFrameRateSeekbar.setUnit("FPS");
         mBitrateSeekbar.setProgress(2);
         mLoadingDialogFragment = LoadingDialogFragment.newInstance();
         mLoadingDialogFragment.show(getActivity().getFragmentManager(),"");

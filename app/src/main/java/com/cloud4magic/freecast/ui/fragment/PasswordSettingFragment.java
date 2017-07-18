@@ -160,10 +160,9 @@ public class PasswordSettingFragment extends Fragment {
         unbinder.unbind();
     }
 
-    @OnClick({R.id.display_status_current, R.id.display_status_new, R.id.display_status_comfirm, R.id.modify_button, R.id.forgot_password_button})
+    @OnClick({R.id.display_status_current, R.id.display_status_new, R.id.display_status_comfirm})
     public void onViewClicked(View view) {
         switch (view.getId()) {
-
             case R.id.display_status_current:
                 showAndHidePassword(mCurrentPasswordEdit,view);
                 break;
@@ -172,10 +171,6 @@ public class PasswordSettingFragment extends Fragment {
                 break;
             case R.id.display_status_comfirm:
                 showAndHidePassword(mComfirmEdit,view);
-                break;
-            case R.id.modify_button:
-                break;
-            case R.id.forgot_password_button:
                 break;
         }
     }
@@ -202,8 +197,8 @@ public class PasswordSettingFragment extends Fragment {
         if (isInitDevice && mParametersConfig != null)
         {
             isForgotClicked = true;
-            mParametersConfig.updateUsernameAndPassword("admin","admin");
-            mDevicePassword = "admin";
+            mParametersConfig.updateUsernameAndPassword("admin","12345678");
+            mDevicePassword = "12345678";
         }else
         {
             ToastUtil.show(MyAplication.INSTANCE, MyAplication.INSTANCE.getString(R.string.plz_connect));
@@ -216,6 +211,10 @@ public class PasswordSettingFragment extends Fragment {
     private void submit() {
         String newPass = mNewPasswordEdit.getText().toString();
         String comfirm = mComfirmEdit.getText().toString();
+        if (TextUtils.isEmpty(mDevicePassword)) {
+            ToastUtil.show(MyAplication.INSTANCE,MyAplication.INSTANCE.getString(R.string.current_pass));
+            return;
+        }
         if (TextUtils.isEmpty(newPass)) {
             ToastUtil.show(MyAplication.INSTANCE,MyAplication.INSTANCE.getString(R.string.input_newpass));
             return;

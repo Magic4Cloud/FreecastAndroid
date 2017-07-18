@@ -20,8 +20,8 @@
 
     <TextView
         android:id="@+id/disclaimer"
-        android:text="@string/disclaimer"
-        style="@style/menu_text_style"/>
+        style="@style/menu_text_style"
+        android:text="@string/disclaimer"/>
 
     <TextView
         android:id="@+id/privacy_policy"

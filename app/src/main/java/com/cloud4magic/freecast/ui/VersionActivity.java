@@ -82,7 +82,6 @@ public class VersionActivity extends AppCompatActivity {
 //        } catch (Exception e) {
 //            e.printStackTrace();
 //        }
-
     }
 
 

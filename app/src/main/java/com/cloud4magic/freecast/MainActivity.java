@@ -2,13 +2,17 @@ package com.cloud4magic.freecast;
 
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.StringRes;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
@@ -52,6 +56,12 @@ public class MainActivity extends AppCompatActivity {
     ImageView mMainBg;
     @BindView(R.id.main_layout)
     View mainLayout;
+    @BindView(R.id.black_view)
+    View blackView;
+    @BindView(R.id.side_menu)
+    View side_menu;
+    @BindView(R.id.toolbar)
+    Toolbar mToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,37 +69,33 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         startLogoAnime();
-        mDrawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
-            @Override
-            public void onDrawerSlide(View drawerView, float slideOffset) {
+        ActionBarDrawerToggle toggle = new DrawerListener(
+                this, mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        mDrawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
 
-                WindowManager manager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
-                Display display = manager.getDefaultDisplay();
-                mActivityMainContent.layout(mNavView.getRight(), 0, mNavView.getRight() + display.getWidth(), display.getHeight());
-            }
-
-            @Override
-            public void onDrawerOpened(View drawerView) {
-
-            }
-
-            @Override
-            public void onDrawerClosed(View drawerView) {
-
-            }
-
-            @Override
-            public void onDrawerStateChanged(int newState) {
-
-            }
-        });
         StatusBarUtil.setTranslucentForDrawerLayout(this, mDrawerLayout);
         mMainBg.post(new Runnable() {
             @Override
             public void run() {
-                Fglass.blur(mMainBg, mainLayout, 2, 8);
+                Fglass.blur(mMainBg, blackView, 2, 8);
             }
         });
+    }
+
+    private class DrawerListener extends ActionBarDrawerToggle {
+
+        public DrawerListener(Activity activity, DrawerLayout drawerLayout, Toolbar toolbar, @StringRes int openDrawerContentDescRes, @StringRes int closeDrawerContentDescRes) {
+            super(activity, drawerLayout, toolbar, openDrawerContentDescRes, closeDrawerContentDescRes);
+        }
+
+        @Override
+        public void onDrawerSlide(View drawerView, float slideOffset) {
+            super.onDrawerSlide(drawerView, slideOffset);
+            WindowManager manager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+            Display display = manager.getDefaultDisplay();
+            mActivityMainContent.layout(mNavView.getRight(), 0, mNavView.getRight() + display.getWidth(), display.getHeight());
+        }
     }
 
     @Override
@@ -153,13 +159,13 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(this, VersionActivity.class));
                 break;
             case R.id.disclaimer:
-                DeclareActivity.startActivity(this,0);
+                DeclareActivity.startActivity(this, 0);
                 break;
             case R.id.privacy_policy:
-                DeclareActivity.startActivity(this,1);
+                DeclareActivity.startActivity(this, 1);
                 break;
             case R.id.copyright:
-                DeclareActivity.startActivity(this,2);
+                DeclareActivity.startActivity(this, 2);
                 break;
         }
         mDrawerLayout.closeDrawer(GravityCompat.START);
