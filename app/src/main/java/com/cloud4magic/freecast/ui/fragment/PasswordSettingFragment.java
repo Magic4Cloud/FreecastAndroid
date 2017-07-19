@@ -112,24 +112,20 @@ public class PasswordSettingFragment extends Fragment {
                 return;
             }
             switch (result.type) {
-                case ParametersConfig.GET_USERNAME_PASSWORD:
-                    Logger.e("Misuzu", "ParametersConfig.GET_USERNAME_PASSWORD");
-                    mDevicePassword = praseJson(result.body);
-                    mCurrentPasswordEdit.setText(mDevicePassword);
-                    break;
-                case ParametersConfig.UPDATE_USERNAME_PASSWORD:
-                    if (isForgotClicked)
-                    {
-                        ToastUtil.show(MyAplication.INSTANCE,MyAplication.INSTANCE.getString(R.string.reset_password_sucess));
-                        isForgotClicked = false;
-                    }
-                    else
-                        ToastUtil.show(MyAplication.INSTANCE,MyAplication.INSTANCE.getString(R.string.modify_password_sucess));
+                case ParametersConfig.RESET_WIFI_PWD:
+                    ToastUtil.show(MyAplication.INSTANCE,MyAplication.INSTANCE.getString(R.string.reset_password_sucess));
                     mComfirmEdit.setText("");
                     mNewPasswordEdit.setText("");
-                    mCurrentPasswordEdit.setText(mDevicePassword);
+                    mCurrentPasswordEdit.setText("");
+                    break;
+                case ParametersConfig.UPDATE_WIFI_PWD:
+                    ToastUtil.show(MyAplication.INSTANCE,MyAplication.INSTANCE.getString(R.string.modify_password_sucess));
+                    mComfirmEdit.setText("");
+                    mNewPasswordEdit.setText("");
+                    mCurrentPasswordEdit.setText("");
                     break;
             }
+
         }
     };
 
@@ -196,9 +192,7 @@ public class PasswordSettingFragment extends Fragment {
     {
         if (isInitDevice && mParametersConfig != null)
         {
-            isForgotClicked = true;
-            mParametersConfig.updateUsernameAndPassword("admin","12345678");
-            mDevicePassword = "12345678";
+            mParametersConfig.resetWifiPassword();
         }else
         {
             ToastUtil.show(MyAplication.INSTANCE, MyAplication.INSTANCE.getString(R.string.plz_connect));
@@ -211,10 +205,10 @@ public class PasswordSettingFragment extends Fragment {
     private void submit() {
         String newPass = mNewPasswordEdit.getText().toString();
         String comfirm = mComfirmEdit.getText().toString();
-        if (TextUtils.isEmpty(mDevicePassword)) {
-            ToastUtil.show(MyAplication.INSTANCE,MyAplication.INSTANCE.getString(R.string.current_pass));
-            return;
-        }
+//        if (TextUtils.isEmpty(mDevicePassword)) {
+//            ToastUtil.show(MyAplication.INSTANCE,MyAplication.INSTANCE.getString(R.string.current_pass));
+//            return;
+//        }
         if (TextUtils.isEmpty(newPass)) {
             ToastUtil.show(MyAplication.INSTANCE,MyAplication.INSTANCE.getString(R.string.input_newpass));
             return;
@@ -230,7 +224,7 @@ public class PasswordSettingFragment extends Fragment {
             return;
         }
 
-        mParametersConfig.updateUsernameAndPassword("admin",newPass);
+        mParametersConfig.updateWifiPassword(newPass);
         mDevicePassword = newPass;
     }
 

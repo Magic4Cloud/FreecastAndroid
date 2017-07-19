@@ -58,6 +58,7 @@ public class VersionActivity extends AppCompatActivity {
     private String mDeviceName = "";
     private String mDevicePassword = "";
     public boolean isInitDevice = false;
+    public boolean isWifiConnected; // 外网wifi是否连接
     LoadingDialogFragment mLoadingDialogFragment;
 
 
@@ -73,15 +74,15 @@ public class VersionActivity extends AppCompatActivity {
         mLoadingDialogFragment = LoadingDialogFragment.newInstance();
         mLoadingDialogFragment.show(getFragmentManager(), "");
         scanDevice();
-//        File upgradeFile = new File(getExternalFilesDir(null) + File.separator + "upgrade.tar");
-//        String dirPath = getExternalFilesDir(null) + File.separator + "ungrade";
-//        try {
-////            TarManager.deTarArchive(upgradeFile, dirPath);
-//            FilesUtils filesUtils = new FilesUtils();
-//            filesUtils.getFileList(dirPath);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+        //        File upgradeFile = new File(getExternalFilesDir(null) + File.separator + "upgrade.tar");
+        //        String dirPath = getExternalFilesDir(null) + File.separator + "ungrade";
+        //        try {
+        ////            TarManager.deTarArchive(upgradeFile, dirPath);
+        //            FilesUtils filesUtils = new FilesUtils();
+        //            filesUtils.getFileList(dirPath);
+        //        } catch (Exception e) {
+        //            e.printStackTrace();
+        //        }
     }
 
 
@@ -155,13 +156,16 @@ public class VersionActivity extends AppCompatActivity {
                         .show();
                 break;
             case R.id.check_version:
+                if (getWifiConnectStatus()) {
+                    launchAppDetail(getPackageName(), "");
+                    return;
+                }
                 new AlertDialog.Builder(this)
                         .setMessage(getResources().getText(R.string.switch_wifi))
                         .setPositiveButton("sure", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.cancel();
-                                launchAppDetail(getPackageName(), "");
                             }
                         })
                         .setCancelable(false)
@@ -192,6 +196,39 @@ public class VersionActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
+    /**
+     * 判断外网wifi是否连接
+     */
+    private boolean getWifiConnectStatus() {
+        isWifiConnected = false;
+        RetrofitHelper.getInstance()
+                .getService()
+                .getDownloadLink("http://www.cv-hd.com/upgrade.txt")
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Subscriber<ResponseBody>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                    }
+
+                    @Override
+                    public void onNext(ResponseBody responseBody) {
+                        isWifiConnected = true;
+                    }
+                });
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return isWifiConnected;
+    }
+
 
     /**
      * 获取下载链接 并下载文件

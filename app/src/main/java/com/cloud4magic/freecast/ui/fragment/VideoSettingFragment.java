@@ -3,7 +3,6 @@ package com.cloud4magic.freecast.ui.fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -82,7 +81,7 @@ public class VideoSettingFragment extends Fragment {
 
     private void initView()
     {
-        mSmoothPart.setSelected(true);
+        mGoodPart.setSelected(true);
         lastViewSelected = mSmoothPart;
         mResolutionSeekbar.isShowBubble(false);
         mResolutionSeekbar.setUnit("P");
@@ -91,7 +90,7 @@ public class VideoSettingFragment extends Fragment {
         mBitrateSeekbar.setProgress(2);
         mLoadingDialogFragment = LoadingDialogFragment.newInstance();
         mLoadingDialogFragment.show(getActivity().getFragmentManager(),"");
-        switchCheck(mSmoothPart);
+        switchCheck(mGoodPart);
         scanDevice();
         setOnProgressChange();
     }
@@ -208,7 +207,7 @@ public class VideoSettingFragment extends Fragment {
         float value = quality*3000/52.0f;
         value = value/1000;
         BigDecimal bigDecimal = new BigDecimal(value);
-        bigDecimal = bigDecimal.setScale(1,BigDecimal.ROUND_DOWN);
+        bigDecimal = bigDecimal.setScale(1,BigDecimal.ROUND_HALF_UP);
         value = bigDecimal.floatValue();
         Logger.e("Misuzu","biteRate ---> "+value +" real quality --->"+quality +" quality -->"+getQuality(value));
         return value;
@@ -248,14 +247,14 @@ public class VideoSettingFragment extends Fragment {
      */
     public void initSeekBar()
     {
-        if (resolution == 1 && (int)(bitRate*10) == 8 && fps == 20)
+        if (resolution == 1 && (int)(bitRate*10) == 2 && fps == 12)
         {
             switchCheck(mSmoothPart);
-        }else if (resolution == 2 && (int)(bitRate*10) == 15 && fps == 25)
+        }else if (resolution == 2 && (int)(bitRate*10) == 20 && fps == 24)
         {
             switchCheck(mGoodPart);
         }
-        else if (resolution == 3 && bitRate == 5 && fps == 30)
+        else if (resolution == 3 && bitRate == 8 && fps == 24)
         {
             switchCheck(mBestPart);
         }else
@@ -315,29 +314,29 @@ public class VideoSettingFragment extends Fragment {
         // 切换选项块
         if (view.getId() == R.id.custom_part)
         {
-            mFrameRateSeekbar.getConfigBuilder()
-                    .thumbColor(ContextCompat.getColor(getContext(),R.color.text_blue))
-                    .build();
-            mBitrateSeekbar.getConfigBuilder()
-                    .thumbColor(ContextCompat.getColor(getContext(),R.color.text_blue))
-                    .build();
-            mResolutionSeekbar.getConfigBuilder()
-                    .thumbColor(ContextCompat.getColor(getContext(),R.color.text_blue))
-                    .build();
+//            mFrameRateSeekbar.getConfigBuilder()
+//                    .thumbColor(ContextCompat.getColor(getContext(),R.color.text_blue))
+//                    .build();
+//            mBitrateSeekbar.getConfigBuilder()
+//                    .thumbColor(ContextCompat.getColor(getContext(),R.color.text_blue))
+//                    .build();
+//            mResolutionSeekbar.getConfigBuilder()
+//                    .thumbColor(ContextCompat.getColor(getContext(),R.color.text_blue))
+//                    .build();
             mFrameRateSeekbar.setEnabled(true);
             mBitrateSeekbar.setEnabled(true);
             mResolutionSeekbar.setEnabled(true);
         }else
         {
-            mFrameRateSeekbar.getConfigBuilder()
-                    .thumbColor(ContextCompat.getColor(getContext(),R.color.text_gray))
-                    .build();
-            mBitrateSeekbar.getConfigBuilder()
-                    .thumbColor(ContextCompat.getColor(getContext(),R.color.text_gray))
-                    .build();
-            mResolutionSeekbar.getConfigBuilder()
-                    .thumbColor(ContextCompat.getColor(getContext(),R.color.text_gray))
-                    .build();
+//            mFrameRateSeekbar.getConfigBuilder()
+//                    .thumbColor(ContextCompat.getColor(getContext(),R.color.text_gray))
+//                    .build();
+//            mBitrateSeekbar.getConfigBuilder()
+//                    .thumbColor(ContextCompat.getColor(getContext(),R.color.text_gray))
+//                    .build();
+//            mResolutionSeekbar.getConfigBuilder()
+//                    .thumbColor(ContextCompat.getColor(getContext(),R.color.text_gray))
+//                    .build();
             mFrameRateSeekbar.setEnabled(false);
             mBitrateSeekbar.setEnabled(false);
             mResolutionSeekbar.setEnabled(false);
@@ -347,27 +346,27 @@ public class VideoSettingFragment extends Fragment {
         switch (view.getId()) {
             case R.id.smooth_part:
                 mResolutionSeekbar.setProgress(480);
-                mBitrateSeekbar.setProgress(0.8f);
-                mFrameRateSeekbar.setProgress(20);
+                mBitrateSeekbar.setProgress(0.2f);
+                mFrameRateSeekbar.setProgress(12);
                 resolution = 1;
-                fps = 20;
-                bitRate = 0.8f;
+                fps = 12;
+                bitRate = 0.2f;
                 break;
             case R.id.good_part:
                 mResolutionSeekbar.setProgress(780);
-                mBitrateSeekbar.setProgress(1.5f);
-                mFrameRateSeekbar.setProgress(25);
+                mBitrateSeekbar.setProgress(2f);
+                mFrameRateSeekbar.setProgress(24);
                 resolution = 2;
-                fps = 25;
-                bitRate = 1.5f;
+                fps = 24;
+                bitRate = 2f;
                 break;
             case R.id.best_part:
                 mResolutionSeekbar.setProgress(1080);
-                mBitrateSeekbar.setProgress(5);
-                mFrameRateSeekbar.setProgress(30);
+                mBitrateSeekbar.setProgress(8);
+                mFrameRateSeekbar.setProgress(24);
                 resolution = 3;
-                fps = 30;
-                bitRate = 5f;
+                fps = 24;
+                bitRate = 8f;
                 break;
             case R.id.custom_part:
                 if (resolution == 0)

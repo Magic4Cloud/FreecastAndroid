@@ -110,8 +110,11 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginTop">20dp</item>
-        <item name="android:gravity">center</item>
-        <item name="android:padding">10dp</item>
+        <!--<item name="android:gravity">center</item>-->
+        <!--<item name="android:padding">10dp</item>-->
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:paddingLeft">67dp</item>
         <item name="android:textColor">@color/menu_text</item>
     </style>
 
