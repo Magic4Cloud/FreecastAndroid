@@ -132,9 +132,18 @@ public class VideoFragment extends Fragment {
         loadVideo();
     }
 
+    /**
+     * selected changed
+     */
     public void setSelect(boolean select) {
         if (mAdapter != null) {
             mAdapter.setSelect(select);
+        }
+        // clear selected items
+        if (!select) {
+            if (mSelectedData != null) {
+                mSelectedData.clear();
+            }
         }
     }
 
@@ -153,10 +162,21 @@ public class VideoFragment extends Fragment {
     }
 
     /**
-     * share video to other platforms
+     * share photo to other platforms
      */
-    public void share() {
+    public boolean canShare() {
+        if (mSelectedData == null || mSelectedData.size() != 1) {
+            ToastUtil.show(getContext(), getResources().getString(R.string.share_no_video));
+            return false;
+        }
+        return true;
+    }
 
+    /**
+     * return the path of photo
+     */
+    public String getSharePath() {
+        return mSelectedData.get(0);
     }
 
     /**

@@ -56,8 +56,27 @@
     <string name="share">Share</string>
     <string name="delete_no_photo">Please select one or more photos to delete</string>
     <string name="delete_no_video">Please select one or more videos to delete</string>
-    <string name="delete_notice">Are you sure you want to delete it?</string>
+    <string name="delete_notice">Are you sure you want to delete?</string>
+    <string name="share_no_photo">Please select only one photo to share</string>
+    <string name="share_no_video">Please select only one video to share</string>
+    <string name="share_to_facebook_success">"share to Facebook success !"</string>
+    <string name="share_to_facebook_failure">"share to Facebook failure !"</string>
+    <string name="share_to_youtube_success">"share to YouTube success !"</string>
+    <string name="share_to_youtube_failure">"share to YouTube failure !"</string>
+    <string name="share_to_instagram_success">"share to Instagram success !"</string>
+    <string name="share_to_instagram_failure">"share to Instagram failure !"</string>
+    <string name="cancel">Cancel</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="delete_success">Delete success !</string>
+
+    <string name="network_disable">Network is disabled, please check your network connection !</string>
+    
+    <string name="youtube">YouTube</string>
+    <string name="facebook">Facebook</string>
+    <string name="instagram">Instagram</string>
+    <string name="facebook_app_id">273818069762195</string>
+
+    <string name="device_wifi">"\"FREECAST_2C29D4\""</string>
+
 </resources>

@@ -772,8 +772,24 @@ public class PlayerActivity extends AppCompatActivity {
         mPlayer.setTimeout(20000);
         mPlayer.setOnH264UpdateListener(new Player.OnH264UpdateListener() {
             @Override
-            public void onH264Updated(int i, int i1, int i2, byte[] bytes) {
-                Logger.e("xmzd", "onH264Updated: " + i + "-" + i1 + "-" + i2 + "-" + bytes);
+            public void onH264Updated(int width, int height, int size, byte[] bytes) {
+                if (mRecording) {
+                    Logger.e("xmzd", "onH264Updated: width == " + width);
+                    Logger.e("xmzd", "onH264Updated: height == " + height);
+                    Logger.e("xmzd", "onH264Updated: size == " + size);
+                    StringBuilder stringBuilder = new StringBuilder("");
+                    for (int j = 0; j < bytes.length; j++) {
+                        int v = bytes[j] & 0xFF;
+                        String hv = Integer.toHexString(v);
+                        if (hv.length() < 2) {
+                            stringBuilder.append(0);
+                        }
+                        stringBuilder.append(hv + " ");
+                    }
+                    Logger.e("xmzd", "onH264Updated: h264 == " + stringBuilder.toString());
+                    // pack video
+                    /*RecordVideo.mp4packVideo(bytes, size, 1);*/
+                }
             }
         });
         // play video timeout
@@ -1021,6 +1037,7 @@ public class PlayerActivity extends AppCompatActivity {
                 mSoundPool.play(mVoiceEndRecord, 1, 1, 0, 0, 1);
             }
             mPlayer.endRecord();
+//            RecordVideo.mp4close();
             mRecording = false;
             if (mRecordVideoView != null) {
                 mRecordVideoView.setSelected(false);
@@ -1042,6 +1059,16 @@ public class PlayerActivity extends AppCompatActivity {
                     mRecordVideoView.setSelected(true);
                 }
             }
+            /*boolean isInit = RecordVideo.mp4init(mPathRecord, mPlayer.getVideoWidth(), mPlayer.getVideoHeight(), mFps, 1);
+            Logger.e("xmzd", "start record video -- mp4init == " + isInit);
+            if (mSoundPool != null) {
+                mSoundPool.play(mVoiceStartRecord, 1, 1, 0, 0, 1);
+            }
+            mVideoTime = 0;
+            mRecording = true;
+            if (mRecordVideoView != null) {
+                mRecordVideoView.setSelected(true);
+            }*/
         }
     }
 

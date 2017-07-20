@@ -40,17 +40,17 @@ public class WLANAPI {
 
 
     public static boolean isConnectionAvailable(Context cotext) {
-        boolean isConnectionFail = true;
+        boolean available = false;
         ConnectivityManager connectivityManager = (ConnectivityManager) cotext.getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivityManager != null) {
             NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
             if (activeNetworkInfo == null || !activeNetworkInfo.isConnected()) {
-                isConnectionFail = true;
+                available = false;
             } else {
-                isConnectionFail = false;
+                available = true;
             }
         }
-        return isConnectionFail;
+        return available;
     }
 
     public boolean IsopenWifi() {
