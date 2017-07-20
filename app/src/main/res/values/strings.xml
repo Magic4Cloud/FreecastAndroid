@@ -28,7 +28,7 @@
     <string name="current_ssid">Current WiFi SSID</string>
     <string name="current_password">Current Password</string>
     <string name="new_password">New Password</string>
-    <string name="comfirm">Comfirm</string>
+    <string name="comfirm">Confirm</string>
     <string name="device">Device</string>
     <string name="forgot_password">Forgot Password?</string>
     <string name="version">Version</string>
@@ -37,6 +37,7 @@
     <string name="copyright">Copyright</string>
     <string name="modify_video_sucess">Set video params success!</string>
     <string name="plz_connect">Please connect device first!</string>
+    <string name="current_pass">Current password must be not empty</string>
     <string name="input_newpass">Please input newpassword</string>
     <string name="input_comfirm">Please input comfirm password</string>
     <string name="input_not_consistent">Two input password must be consistent</string>
@@ -46,7 +47,7 @@
     <string name="library_videos">Videos</string>
     <string name="library_select">Select</string>
     <string name="library_cancel">Cancel</string>
-    <string name="freestream2">FreeStream 2.0</string>
+    <string name="freestream2">FREESTREEM 2.0</string>
     <string name="transmitter_id">Transmitter Device ID:</string>
     <string name="transmitter_ip">Transmitter IP Address:</string>
     <string name="firmware_update">Firmware Update</string>

@@ -168,6 +168,8 @@ public class ParametersConfig {
     public static final int GET_VIDEO_FOLDER_LIST = 17;
     public static final int GET_VIDEO_LIST = 18;
     public static final int GET_SIGNAL = 19;
+    public static final int UPDATE_WIFI_PWD = 20;
+    public static final int RESET_WIFI_PWD = 21;
 
     /**
      * Description: Update Username And Password.
@@ -423,6 +425,23 @@ public class ParametersConfig {
     public void getSignal() {
         get("http://" + _ip +
                 "/server.command?command=get_signal_level", GET_SIGNAL);
+    }
+
+    /**
+     * 更新wifi密码
+     */
+    public void updateWifiPassword(String password)
+    {
+        get("http://" + _ip +
+                "/param.cgi?action=update&group=wifi&ap_auth_key="+password+"&ap_auth_mode=OPEN&ap_hide_ssid=0&ap_channel=36",UPDATE_WIFI_PWD);
+    }
+
+    /**
+     * 重置wifi密码
+     */
+    public void resetWifiPassword()
+    {
+        get("http://" + _ip +"/server.command?command=reset_wifi",RESET_WIFI_PWD);
     }
 
     //region event

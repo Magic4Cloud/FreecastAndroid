@@ -13,13 +13,20 @@
         android:id="@+id/main_bg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/temp_main_bg"
-        android:scaleType="centerCrop"/>
+        android:scaleType="centerCrop"
+        android:src="@drawable/temp_main_bg"/>
+
+    <View
+        android:id="@+id/black_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
 
     <LinearLayout
         android:id="@+id/main_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="#a9000000"
         android:orientation="vertical">
 
         <ImageView
@@ -28,42 +35,54 @@
             android:layout_height="30dp"
             android:layout_marginLeft="20dp"
             android:layout_marginTop="40dp"
-            android:src="@drawable/icon_side_menu"/>
+            android:src="@drawable/icon_side_menu"
+            android:visibility="gone"/>
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_marginTop="30dp"
+            app:popupTheme="@style/AppTheme.PopupOverlay"/>
+
         <ImageView
             android:id="@+id/main_logo"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="30dp"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
             android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="20dp"
             android:src="@mipmap/ic_logo"/>
 
-       <com.cloud4magic.freecast.widget.TouchAnimeFrameLayout
-           android:id="@+id/main_live_view"
-           style="@style/main_card_style">
-           <ImageView
-               android:src="@drawable/button_view_nor"
-               style="@style/main_card_img_style"/>
-       </com.cloud4magic.freecast.widget.TouchAnimeFrameLayout>
-
         <com.cloud4magic.freecast.widget.TouchAnimeFrameLayout
-            android:id="@+id/main_browse"
+            android:id="@+id/main_live_view"
             style="@style/main_card_style">
+
             <ImageView
-                android:src="@drawable/button_browse_nor"
-                style="@style/main_card_img_style"/>
+                style="@style/main_card_img_style"
+                android:src="@drawable/button_view_nor"/>
         </com.cloud4magic.freecast.widget.TouchAnimeFrameLayout>
 
         <com.cloud4magic.freecast.widget.TouchAnimeFrameLayout
             android:id="@+id/main_setting"
             style="@style/main_card_style">
+
             <ImageView
-                android:src="@drawable/button_configue_nor"
-                style="@style/main_card_img_style"/>
+                style="@style/main_card_img_style"
+                android:src="@drawable/button_configue_nor"/>
+
+        </com.cloud4magic.freecast.widget.TouchAnimeFrameLayout>
+
+        <com.cloud4magic.freecast.widget.TouchAnimeFrameLayout
+            android:id="@+id/main_browse"
+            style="@style/main_card_style">
+
+            <ImageView
+                style="@style/main_card_img_style"
+                android:src="@drawable/button_browse_nor"/>
         </com.cloud4magic.freecast.widget.TouchAnimeFrameLayout>
 
     </LinearLayout>
-
 
 
 </FrameLayout>

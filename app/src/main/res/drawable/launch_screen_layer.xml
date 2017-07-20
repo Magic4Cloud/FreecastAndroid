@@ -5,6 +5,6 @@
     <item android:bottom="70dp"
         >
         <bitmap android:src="@mipmap/ic_logo"
-                android:gravity="center|bottom"/>
+                android:gravity="center"/>
     </item>
 </layer-list>
