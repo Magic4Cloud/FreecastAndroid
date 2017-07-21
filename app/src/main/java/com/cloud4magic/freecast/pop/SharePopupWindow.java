@@ -2,6 +2,8 @@ package com.cloud4magic.freecast.pop;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.view.Gravity;
@@ -9,10 +11,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 
 import com.cloud4magic.freecast.R;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -25,8 +29,15 @@ public class SharePopupWindow extends PopupWindow {
 
     private Activity mActivity;
     private OnPlatformListener mListener;
+    private String mPath;
+    @BindView(R.id.share_youtube)
+    LinearLayout mYoutubeView;
+    @BindView(R.id.share_facebook)
+    LinearLayout mFacebookView;
+    @BindView(R.id.share_instagram)
+    LinearLayout mInstagramView;
 
-    public SharePopupWindow (Activity activity) {
+    public SharePopupWindow(Activity activity) {
         mActivity = activity;
         initParameters();
         initView();
@@ -54,12 +65,34 @@ public class SharePopupWindow extends PopupWindow {
         View view = LayoutInflater.from(mActivity).inflate(R.layout.popup_window_share, null);
         setContentView(view);
         ButterKnife.bind(this, view);
+        // check instagram
+        if (isAppInstalled(mActivity, "com.instagram.android")) {
+            mInstagramView.setVisibility(View.VISIBLE);
+        } else {
+            mInstagramView.setVisibility(View.GONE);
+        }
+    }
+
+    public void update(String path, boolean isPhoto) {
+        mPath = path;
+        // check youtube
+        if (mYoutubeView != null) {
+            if (isPhoto) {
+                mYoutubeView.setVisibility(View.GONE);
+            } else {
+                if (isAppInstalled(mActivity, "com.google.android.youtube")) {
+                    mYoutubeView.setVisibility(View.VISIBLE);
+                } else {
+                    mYoutubeView.setVisibility(View.GONE);
+                }
+            }
+        }
     }
 
     @OnClick(R.id.share_youtube)
     protected void actionYoutube() {
         if (mListener != null) {
-            mListener.onYoutube();
+            mListener.onYoutube(mPath);
         }
         close();
     }
@@ -67,7 +100,7 @@ public class SharePopupWindow extends PopupWindow {
     @OnClick(R.id.share_facebook)
     protected void actionFacebook() {
         if (mListener != null) {
-            mListener.onFacebook();
+            mListener.onFacebook(mPath);
         }
         close();
     }
@@ -75,7 +108,7 @@ public class SharePopupWindow extends PopupWindow {
     @OnClick(R.id.share_instagram)
     protected void actionInstagram() {
         if (mListener != null) {
-            mListener.onInstagram();
+            mListener.onInstagram(mPath);
         }
         close();
     }
@@ -88,6 +121,24 @@ public class SharePopupWindow extends PopupWindow {
     private int dp2px(Context context, float dp) {
         final float scale = context.getResources().getDisplayMetrics().density;
         return (int) (dp * scale + 0.5f);
+    }
+
+    /**
+     * check the app is installed
+     */
+    private boolean isAppInstalled(Context context, String packageName) {
+        PackageInfo packageInfo;
+        try {
+            packageInfo = context.getPackageManager().getPackageInfo(packageName, 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            packageInfo = null;
+            e.printStackTrace();
+        }
+        if (packageInfo == null) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     /**
@@ -136,9 +187,11 @@ public class SharePopupWindow extends PopupWindow {
         mListener = listener;
     }
 
-    public interface OnPlatformListener{
-        void onYoutube();
-        void onFacebook();
-        void onInstagram();
+    public interface OnPlatformListener {
+        void onYoutube(String path);
+
+        void onFacebook(String path);
+
+        void onInstagram(String path);
     }
 }

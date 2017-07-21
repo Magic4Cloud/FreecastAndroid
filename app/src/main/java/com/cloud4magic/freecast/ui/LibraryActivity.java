@@ -223,7 +223,7 @@ public class LibraryActivity extends AppCompatActivity {
     /**
      * display popup window of share
      */
-    private void showSharePopupWindow(final String path) {
+    private void showSharePopupWindow(String path) {
         if (WLANAPI.isConnectionAvailable(LibraryActivity.this)) {
             WLANAPI wlanapi = new WLANAPI(LibraryActivity.this);
             String ssid = wlanapi.getSSID();
@@ -236,20 +236,16 @@ public class LibraryActivity extends AppCompatActivity {
             mSharePopupWindow = new SharePopupWindow(LibraryActivity.this);
             mSharePopupWindow.setOnPlatformListener(new SharePopupWindow.OnPlatformListener() {
                 @Override
-                public void onYoutube() {
+                public void onYoutube(String path) {
                     if (TextUtils.isEmpty(path)) {
                         ToastUtil.show(LibraryActivity.this, getResources().getString(R.string.share_to_youtube_failure));
                         return;
                     }
-                    if (mIsPhoto) {
-                        sharePhotoToYoutube(path);
-                    } else {
-                        shareVideoToYoutube(path);
-                    }
+                    shareVideoToYoutube(path);
                 }
 
                 @Override
-                public void onFacebook() {
+                public void onFacebook(String path) {
                     if (TextUtils.isEmpty(path)) {
                         ToastUtil.show(LibraryActivity.this, getResources().getString(R.string.share_to_facebook_failure));
                         return;
@@ -262,7 +258,7 @@ public class LibraryActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onInstagram() {
+                public void onInstagram(String path) {
                     if (TextUtils.isEmpty(path)) {
                         ToastUtil.show(LibraryActivity.this, getResources().getString(R.string.share_to_instagram_failure));
                         return;
@@ -275,6 +271,7 @@ public class LibraryActivity extends AppCompatActivity {
                 }
             });
         }
+        mSharePopupWindow.update(path, mIsPhoto);
         mSharePopupWindow.showAtBottom();
     }
 
@@ -338,33 +335,65 @@ public class LibraryActivity extends AppCompatActivity {
     }
 
     /**
-     * share photo to youtube
-     */
-    private void sharePhotoToYoutube(String path) {
-
-    }
-
-    /**
      * share video to youtube
      */
     private void shareVideoToYoutube(String path) {
-
+        // Create the new Intent using the 'Send' action.
+        Intent share = new Intent(Intent.ACTION_SEND);
+        // Set package of Instagram
+        share.setPackage("com.google.android.youtube");
+        // Set the MIME type
+        share.setType("video/*");
+        // Create the URI from the media
+        File media = new File(path);
+        Uri uri = Uri.fromFile(media);
+        // Add the URI to the Intent.
+        share.putExtra(Intent.EXTRA_STREAM, uri);
+        // Broadcast the Intent.
+        startActivity(Intent.createChooser(share, "Share to"));
     }
 
     /**
      * share photo to instagram
      */
     private void sharePhotoToInstagram(String path) {
-
+        // Create the new Intent using the 'Send' action.
+        Intent share = new Intent(Intent.ACTION_SEND);
+        // Set package of Instagram
+        share.setPackage("com.instagram.android");
+        // Set the MIME type
+        share.setType("image/*");
+        // Create the URI from the media
+        File media = new File(path);
+        Uri uri = Uri.fromFile(media);
+        // Add the URI to the Intent.
+        share.putExtra(Intent.EXTRA_STREAM, uri);
+        // Broadcast the Intent.
+        startActivity(Intent.createChooser(share, "Share to"));
     }
 
     /**
      * share video to instagram
+     * Minimum Duration	3 seconds
+     * Maximum Duration	10 minutes
+     * Video Format	mkv, mp4
+     * Minimum Dimensions	640x640 pixels
      */
     private void shareVideoToInstagram(String path) {
-
+        // Create the new Intent using the 'Send' action.
+        Intent share = new Intent(Intent.ACTION_SEND);
+        // Set package of Instagram
+        share.setPackage("com.instagram.android");
+        // Set the MIME type
+        share.setType("video/*");
+        // Create the URI from the media
+        File media = new File(path);
+        Uri uri = Uri.fromFile(media);
+        // Add the URI to the Intent.
+        share.putExtra(Intent.EXTRA_STREAM, uri);
+        // Broadcast the Intent.
+        startActivity(Intent.createChooser(share, "Share to"));
     }
-
 
 
     @Override
