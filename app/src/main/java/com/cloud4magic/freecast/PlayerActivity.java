@@ -107,6 +107,7 @@ public class PlayerActivity extends AppCompatActivity {
     private long mVideoTime = 0;
     private FileOutputStream mFos;
     private int mConnectTime = 0;
+    private boolean mDeviceClosed = false;
 
     private Unbinder mUnbinder = null;
     @BindView(R.id.player_loading)
@@ -895,23 +896,26 @@ public class PlayerActivity extends AppCompatActivity {
                     if (mPlayer != null && mPlayer.getState() != Enums.State.PLAYING) {
                         mConnectTime++;
                         if (mConnectTime > 5) {
-                            mPlayer.stop();
-                            showLoadingView();
-                            if ("127.0.0.1".equals(mDeviceIp)) {
-                                remoteConnected(false);
+                            if (mDeviceClosed) {
+                                mStopTraffic = true;
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        ToastUtil.show(PlayerActivity.this, getResources().getString(R.string.reconnect_failed));
+                                        stop();
+                                        finish();
+                                    }
+                                });
                             } else {
-                                localConnected(false);
-                            }
-                            mConnectTime = 0;
-                            /*mStopTraffic = true;
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    ToastUtil.show(PlayerActivity.this, getResources().getString(R.string.reconnect_failed));
-                                    stop();
-                                    finish();
+                                mPlayer.stop();
+                                showLoadingView();
+                                if ("127.0.0.1".equals(mDeviceIp)) {
+                                    remoteConnected(false);
+                                } else {
+                                    localConnected(false);
                                 }
-                            });*/
+                                mConnectTime = 0;
+                            }
                         }
                         Logger.e("xmzd", "reconnect time: " + mConnectTime);
                     }
@@ -1211,6 +1215,12 @@ public class PlayerActivity extends AppCompatActivity {
         } else {
             mWifiNameView.setText(getResources().getString(R.string.no_wifi));
             mWifiIconView.setSelected(false);
+        }
+        // device
+        if (getResources().getString(R.string.device_wifi).equals(ssid)) {
+            mDeviceClosed = false;
+        } else {
+            mDeviceClosed = true;
         }
     }
 
