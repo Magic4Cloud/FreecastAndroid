@@ -894,8 +894,16 @@ public class PlayerActivity extends AppCompatActivity {
                     }
                     if (mPlayer != null && mPlayer.getState() != Enums.State.PLAYING) {
                         mConnectTime++;
-                        if (mConnectTime > 30) {
-                            mStopTraffic = true;
+                        if (mConnectTime > 5) {
+                            mPlayer.stop();
+                            showLoadingView();
+                            if ("127.0.0.1".equals(mDeviceIp)) {
+                                remoteConnected(false);
+                            } else {
+                                localConnected(false);
+                            }
+                            mConnectTime = 0;
+                            /*mStopTraffic = true;
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -903,7 +911,7 @@ public class PlayerActivity extends AppCompatActivity {
                                     stop();
                                     finish();
                                 }
-                            });
+                            });*/
                         }
                         Logger.e("xmzd", "reconnect time: " + mConnectTime);
                     }
@@ -1042,6 +1050,9 @@ public class PlayerActivity extends AppCompatActivity {
             if (mRecordVideoView != null) {
                 mRecordVideoView.setSelected(false);
             }
+            if (mTakePhotoView != null) {
+                mTakePhotoView.setEnabled(true);
+            }
             ToastUtil.show(PlayerActivity.this, "Video saved as " + mPathRecord);
         } else {
             if (TextUtils.isEmpty(mPathVideo)) {
@@ -1057,6 +1068,9 @@ public class PlayerActivity extends AppCompatActivity {
                 mRecording = true;
                 if (mRecordVideoView != null) {
                     mRecordVideoView.setSelected(true);
+                }
+                if (mTakePhotoView != null) {
+                    mTakePhotoView.setEnabled(false);
                 }
             }
             /*boolean isInit = RecordVideo.mp4init(mPathRecord, mPlayer.getVideoWidth(), mPlayer.getVideoHeight(), mFps, 1);
