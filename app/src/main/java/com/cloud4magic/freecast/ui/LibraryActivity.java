@@ -33,6 +33,7 @@ import com.facebook.share.model.ShareVideoContent;
 import com.facebook.share.widget.ShareDialog;
 
 import java.io.File;
+import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -220,17 +221,35 @@ public class LibraryActivity extends AppCompatActivity {
         }
     }
 
+    public boolean isNetworkOnline() {
+        Runtime runtime = Runtime.getRuntime();
+        try {
+            Process ipProcess = runtime.exec("ping -c 1 www.google.com");
+            int exitValue = ipProcess.waitFor();
+            return (exitValue == 0);
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     /**
      * display popup window of share
      */
     private void showSharePopupWindow(String path) {
-        if (WLANAPI.isConnectionAvailable(LibraryActivity.this)) {
-            WLANAPI wlanapi = new WLANAPI(LibraryActivity.this);
+        if (!WLANAPI.isConnectionAvailable(LibraryActivity.this)) {
+            /*WLANAPI wlanapi = new WLANAPI(LibraryActivity.this);
             String ssid = wlanapi.getSSID();
             if (getResources().getString(R.string.device_wifi).equals(ssid)) {
                 ToastUtil.show(LibraryActivity.this, getResources().getString(R.string.network_disable));
                 return;
-            }
+            }*/
+            /*if (!isNetworkOnline()) {
+                ToastUtil.show(LibraryActivity.this, getResources().getString(R.string.network_disable));
+                return;
+            }*/
+            ToastUtil.show(LibraryActivity.this, getResources().getString(R.string.network_disable));
+            return;
         }
         if (mSharePopupWindow == null) {
             mSharePopupWindow = new SharePopupWindow(LibraryActivity.this);
