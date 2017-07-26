@@ -17,7 +17,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.cloud4magic.freecast.MyAplication;
+import com.cloud4magic.freecast.MyApplication;
 import com.cloud4magic.freecast.R;
 import com.cloud4magic.freecast.api.ParametersConfig;
 import com.cloud4magic.freecast.api.WLANAPI;
@@ -113,13 +113,13 @@ public class PasswordSettingFragment extends Fragment {
             }
             switch (result.type) {
                 case ParametersConfig.RESET_WIFI_PWD:
-                    ToastUtil.show(MyAplication.INSTANCE,MyAplication.INSTANCE.getString(R.string.reset_password_sucess));
+                    ToastUtil.show(MyApplication.INSTANCE, MyApplication.INSTANCE.getString(R.string.reset_password_sucess));
                     mComfirmEdit.setText("");
                     mNewPasswordEdit.setText("");
                     mCurrentPasswordEdit.setText("");
                     break;
                 case ParametersConfig.UPDATE_WIFI_PWD:
-                    ToastUtil.show(MyAplication.INSTANCE,MyAplication.INSTANCE.getString(R.string.modify_password_sucess));
+                    ToastUtil.show(MyApplication.INSTANCE, MyApplication.INSTANCE.getString(R.string.modify_password_sucess));
                     mComfirmEdit.setText("");
                     mNewPasswordEdit.setText("");
                     mCurrentPasswordEdit.setText("");
@@ -182,7 +182,7 @@ public class PasswordSettingFragment extends Fragment {
             submit();
         }else
         {
-            ToastUtil.show(MyAplication.INSTANCE, MyAplication.INSTANCE.getString(R.string.plz_connect));
+            ToastUtil.show(MyApplication.INSTANCE, MyApplication.INSTANCE.getString(R.string.plz_connect));
         }
 
     }
@@ -195,7 +195,7 @@ public class PasswordSettingFragment extends Fragment {
             mParametersConfig.resetWifiPassword();
         }else
         {
-            ToastUtil.show(MyAplication.INSTANCE, MyAplication.INSTANCE.getString(R.string.plz_connect));
+            ToastUtil.show(MyApplication.INSTANCE, MyApplication.INSTANCE.getString(R.string.plz_connect));
         }
     }
 
@@ -206,21 +206,21 @@ public class PasswordSettingFragment extends Fragment {
         String newPass = mNewPasswordEdit.getText().toString();
         String comfirm = mComfirmEdit.getText().toString();
 //        if (TextUtils.isEmpty(mDevicePassword)) {
-//            ToastUtil.show(MyAplication.INSTANCE,MyAplication.INSTANCE.getString(R.string.current_pass));
+//            ToastUtil.show(MyApplication.INSTANCE,MyApplication.INSTANCE.getString(R.string.current_pass));
 //            return;
 //        }
         if (TextUtils.isEmpty(newPass)) {
-            ToastUtil.show(MyAplication.INSTANCE,MyAplication.INSTANCE.getString(R.string.input_newpass));
+            ToastUtil.show(MyApplication.INSTANCE, MyApplication.INSTANCE.getString(R.string.input_newpass));
             return;
         }
         if (TextUtils.isEmpty(comfirm)) {
-            ToastUtil.show(MyAplication.INSTANCE,MyAplication.INSTANCE.getString(R.string.input_comfirm));
+            ToastUtil.show(MyApplication.INSTANCE, MyApplication.INSTANCE.getString(R.string.input_comfirm));
             return;
         }
 
         if (!comfirm.equals(newPass))
         {
-            ToastUtil.show(MyAplication.INSTANCE,MyAplication.INSTANCE.getString(R.string.input_not_consistent));
+            ToastUtil.show(MyApplication.INSTANCE, MyApplication.INSTANCE.getString(R.string.input_not_consistent));
             return;
         }
 

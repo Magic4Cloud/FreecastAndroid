@@ -11,7 +11,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
-import com.cloud4magic.freecast.MyAplication;
+import com.cloud4magic.freecast.MyApplication;
 import com.cloud4magic.freecast.R;
 import com.cloud4magic.freecast.utils.Logger;
 import com.cloud4magic.freecast.utils.RetrofitHelper;
@@ -124,12 +124,12 @@ public class VersionActivity extends AppCompatActivity {
                         }
                     }
                     if (!found) {
-                        ToastUtil.show(MyAplication.INSTANCE, MyAplication.INSTANCE.getString(R.string.device_not_found));
+                        ToastUtil.show(MyApplication.INSTANCE, MyApplication.INSTANCE.getString(R.string.device_not_found));
                         mLoadingDialogFragment.dismiss();
                     }
                 } else {
                     // device not found
-                    ToastUtil.show(MyAplication.INSTANCE, MyAplication.INSTANCE.getString(R.string.device_not_found));
+                    ToastUtil.show(MyApplication.INSTANCE, MyApplication.INSTANCE.getString(R.string.device_not_found));
                     mLoadingDialogFragment.dismiss();
                 }
             }

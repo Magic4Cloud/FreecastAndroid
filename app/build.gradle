@@ -1,5 +1,9 @@
 apply plugin: 'com.android.application'
 
+def releaseTime() {
+    return new Date().time.hashCode()
+}
+
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.3"
@@ -7,8 +11,8 @@ android {
         applicationId "com.cloud4magic.freecast"
         minSdkVersion 16
         targetSdkVersion 22
-        versionCode 2
-        versionName "1.1"
+        versionCode 1
+        versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         ndk {
             abiFilters(
@@ -49,6 +53,17 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    android.applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            def outputFile = output.outputFile
+            if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                // update apk name
+                def fileName = outputFile.name.replace("app", "Freestream-${defaultConfig.versionName}")
+                output.outputFile = new File(outputFile.parent, fileName)
+            }
         }
     }
 
@@ -95,11 +110,14 @@ dependencies {
     compile 'com.squareup.retrofit2:adapter-rxjava:2.2.0'
     compile 'com.squareup.okhttp3:logging-interceptor:3.5.0'
 
-
     //rx
     compile 'io.reactivex:rxjava:1.2.3'
     compile 'io.reactivex:rxandroid:1.2.1'
 
     compile group: 'org.apache.commons', name: 'commons-compress', version: '1.11'
 
+    // leak
+    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.1'
+    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
+    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
 }

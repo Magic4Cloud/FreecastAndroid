@@ -44,7 +44,7 @@
     <string name="modify_password_sucess">Set password success!</string>
     <string name="reset_password_sucess">Reset password success!</string>
     <string name="library_photo">Photo</string>
-    <string name="library_videos">Videos</string>
+    <string name="library_videos">Video</string>
     <string name="library_select">Select</string>
     <string name="library_cancel">Cancel</string>
     <string name="freestream2">FREESTREEM 2.0</string>
@@ -76,6 +76,9 @@
     <string name="youtube">YouTube</string>
     <string name="facebook">Facebook</string>
     <string name="instagram">Instagram</string>
+    <string name="youtube_not_installed">Please download YouTube from Google Play first !</string>
+    <string name="facebook_not_installed">Please download Facebook from Google Play first !</string>
+    <string name="instagram_not_installed">Please download Instagram from Google Play first !</string>
 
     <string name="facebook_app_id">273818069762195</string>
     <string name="youtube_client_id">166089579442-n8pf4i5k6pd58tp9hijbt57ce3v5hlpj.apps.googleusercontent.com</string>

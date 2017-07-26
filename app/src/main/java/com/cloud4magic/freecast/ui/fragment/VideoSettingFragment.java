@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.cloud4magic.freecast.MyAplication;
+import com.cloud4magic.freecast.MyApplication;
 import com.cloud4magic.freecast.R;
 import com.cloud4magic.freecast.api.ParametersConfig;
 import com.cloud4magic.freecast.utils.Logger;
@@ -132,12 +132,12 @@ public class VideoSettingFragment extends Fragment {
                         }
                     }
                     if (!found) {
-                        ToastUtil.show(MyAplication.INSTANCE, MyAplication.INSTANCE.getString(R.string.device_not_found));
+                        ToastUtil.show(MyApplication.INSTANCE, MyApplication.INSTANCE.getString(R.string.device_not_found));
                         mLoadingDialogFragment.dismiss();
                     }
                 } else {
                     // device not found
-                    ToastUtil.show(MyAplication.INSTANCE, MyAplication.INSTANCE.getString(R.string.device_not_found));
+                    ToastUtil.show(MyApplication.INSTANCE, MyApplication.INSTANCE.getString(R.string.device_not_found));
                     mLoadingDialogFragment.dismiss();
                 }
             }
@@ -191,7 +191,7 @@ public class VideoSettingFragment extends Fragment {
                     resolution = praseJson(result.body);
                     break;
                 case ParametersConfig.SET_RESOLUTION:
-                    ToastUtil.show(MyAplication.INSTANCE,MyAplication.INSTANCE.getString(R.string.modify_video_sucess));
+                    ToastUtil.show(MyApplication.INSTANCE, MyApplication.INSTANCE.getString(R.string.modify_video_sucess));
                     break;
 
             }
@@ -297,7 +297,7 @@ public class VideoSettingFragment extends Fragment {
             mParametersConfig.setResolution(0,resolution);
         }else
         {
-            ToastUtil.show(MyAplication.INSTANCE,MyAplication.INSTANCE.getString(R.string.plz_connect));
+            ToastUtil.show(MyApplication.INSTANCE, MyApplication.INSTANCE.getString(R.string.plz_connect));
         }
 
     }

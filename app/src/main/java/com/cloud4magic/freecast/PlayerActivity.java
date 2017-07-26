@@ -95,7 +95,7 @@ public class PlayerActivity extends AppCompatActivity {
 
     private boolean mStopTraffic = false;
     private Player mPlayer = null;
-    private static Module mModule = null;
+    private Module mModule = null;
     private Controller mController = null;
     private boolean mRecording = false;
     private Enums.Pipe mPipe = Enums.Pipe.H264_PRIMARY;

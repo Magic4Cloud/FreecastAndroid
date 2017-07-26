@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 
 import com.cloud4magic.freecast.R;
+import com.cloud4magic.freecast.utils.ToastUtil;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -65,12 +66,6 @@ public class SharePopupWindow extends PopupWindow {
         View view = LayoutInflater.from(mActivity).inflate(R.layout.popup_window_share, null);
         setContentView(view);
         ButterKnife.bind(this, view);
-        // check instagram
-        if (isAppInstalled(mActivity, "com.instagram.android")) {
-            mInstagramView.setVisibility(View.VISIBLE);
-        } else {
-            mInstagramView.setVisibility(View.GONE);
-        }
     }
 
     public void update(String path, boolean isPhoto) {
@@ -80,35 +75,43 @@ public class SharePopupWindow extends PopupWindow {
             if (isPhoto) {
                 mYoutubeView.setVisibility(View.GONE);
             } else {
-                if (isAppInstalled(mActivity, "com.google.android.youtube")) {
-                    mYoutubeView.setVisibility(View.VISIBLE);
-                } else {
-                    mYoutubeView.setVisibility(View.GONE);
-                }
+                mYoutubeView.setVisibility(View.VISIBLE);
             }
         }
     }
 
     @OnClick(R.id.share_youtube)
     protected void actionYoutube() {
-        if (mListener != null) {
-            mListener.onYoutube(mPath);
+        if (!isYoutubeInstalled()) {
+            ToastUtil.show(mActivity, R.string.youtube_not_installed);
+        } else {
+            if (mListener != null) {
+                mListener.onYoutube(mPath);
+            }
         }
         close();
     }
 
     @OnClick(R.id.share_facebook)
     protected void actionFacebook() {
-        if (mListener != null) {
-            mListener.onFacebook(mPath);
+        if (!isFacebookInstalled()) {
+            ToastUtil.show(mActivity, R.string.facebook_not_installed);
+        } else {
+            if (mListener != null) {
+                mListener.onFacebook(mPath);
+            }
         }
         close();
     }
 
     @OnClick(R.id.share_instagram)
     protected void actionInstagram() {
-        if (mListener != null) {
-            mListener.onInstagram(mPath);
+        if (!isInstagramInstalled()) {
+            ToastUtil.show(mActivity, R.string.instagram_not_installed);
+        } else {
+            if (mListener != null) {
+                mListener.onInstagram(mPath);
+            }
         }
         close();
     }
@@ -121,6 +124,27 @@ public class SharePopupWindow extends PopupWindow {
     private int dp2px(Context context, float dp) {
         final float scale = context.getResources().getDisplayMetrics().density;
         return (int) (dp * scale + 0.5f);
+    }
+
+    private boolean isYoutubeInstalled() {
+        if (isAppInstalled(mActivity, "com.google.android.youtube")) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isInstagramInstalled() {
+        if (isAppInstalled(mActivity, "com.instagram.android")) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isFacebookInstalled() {
+        if (isAppInstalled(mActivity, "com.facebook.katana")) {
+            return true;
+        }
+        return false;
     }
 
     /**
