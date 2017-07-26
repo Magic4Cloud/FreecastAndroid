@@ -47,7 +47,7 @@
     <string name="library_videos">Video</string>
     <string name="library_select">Select</string>
     <string name="library_cancel">Cancel</string>
-    <string name="freestream2">FREESTREEM 2.0</string>
+    <string name="freestream2">Freestream 2.0</string>
     <string name="transmitter_id">Transmitter Device ID:</string>
     <string name="transmitter_ip">Transmitter IP Address:</string>
     <string name="firmware_update">Firmware Update</string>
