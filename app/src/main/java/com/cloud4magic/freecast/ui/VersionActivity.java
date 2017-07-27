@@ -144,6 +144,10 @@ public class VersionActivity extends AppCompatActivity {
                 finish();
                 break;
             case R.id.check_firmware:
+                if (getWifiConnectStatus()) {
+                    ToastUtil.show(MyApplication.INSTANCE, MyApplication.INSTANCE.getString(R.string.coming_soon));
+                    return;
+                }
                 new AlertDialog.Builder(this)
                         .setMessage(getResources().getText(R.string.switch_wifi))
                         .setPositiveButton("sure", new DialogInterface.OnClickListener() {

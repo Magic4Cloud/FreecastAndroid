@@ -401,17 +401,17 @@ public class VideoSettingFragment extends Fragment {
         mResolutionSeekbar.setOnProgressChangedListener(new BubbleSeekBar.OnProgressChangedListener() {
             @Override
             public void onProgressChanged(int progress, float progressFloat) {
-
+                if (progress == 480)
+                    resolution = 1;
+                else if (progress == 780)
+                    resolution = 2;
+                else
+                    resolution = 3;
             }
 
             @Override
             public void getProgressOnActionUp(int progress, float progressFloat) {
-                    if (progress == 480)
-                        resolution = 1;
-                    else if (progress == 780)
-                        resolution = 2;
-                    else
-                        resolution = 3;
+
             }
 
             @Override
@@ -423,12 +423,12 @@ public class VideoSettingFragment extends Fragment {
         mFrameRateSeekbar.setOnProgressChangedListener(new BubbleSeekBar.OnProgressChangedListener() {
             @Override
             public void onProgressChanged(int progress, float progressFloat) {
-
+                fps = progress;
             }
 
             @Override
             public void getProgressOnActionUp(int progress, float progressFloat) {
-                    fps = progress;
+
             }
 
             @Override
@@ -440,12 +440,12 @@ public class VideoSettingFragment extends Fragment {
         mBitrateSeekbar.setOnProgressChangedListener(new BubbleSeekBar.OnProgressChangedListener() {
             @Override
             public void onProgressChanged(int progress, float progressFloat) {
-
+                bitRate = progressFloat;
             }
 
             @Override
             public void getProgressOnActionUp(int progress, float progressFloat) {
-                    bitRate = progressFloat;
+
             }
 
             @Override
