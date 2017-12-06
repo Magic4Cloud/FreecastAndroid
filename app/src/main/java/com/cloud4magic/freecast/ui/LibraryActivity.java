@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -15,12 +17,14 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.cloud4magic.freecast.MyApplication;
 import com.cloud4magic.freecast.R;
-import com.cloud4magic.freecast.api.WLANAPI;
+import com.cloud4magic.freecast.pop.CheckNetworkPopupWindow;
 import com.cloud4magic.freecast.pop.SharePopupWindow;
 import com.cloud4magic.freecast.ui.fragment.PhotoFragment;
 import com.cloud4magic.freecast.ui.fragment.VideoFragment;
 import com.cloud4magic.freecast.utils.Logger;
+import com.cloud4magic.freecast.utils.NetworkUtils;
 import com.cloud4magic.freecast.utils.ToastUtil;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -33,7 +37,7 @@ import com.facebook.share.model.ShareVideoContent;
 import com.facebook.share.widget.ShareDialog;
 
 import java.io.File;
-import java.io.IOException;
+import java.lang.ref.SoftReference;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -46,6 +50,8 @@ import butterknife.Unbinder;
  * Author  xiaomao
  */
 public class LibraryActivity extends AppCompatActivity {
+
+    private static final String TAG = LibraryActivity.class.getSimpleName();
 
     private Unbinder mUnbinder;
     @BindView(R.id.library_photo)
@@ -64,16 +70,61 @@ public class LibraryActivity extends AppCompatActivity {
     private boolean mSelected = false;
     private boolean mIsPhoto = false;
 
+    private CheckNetworkPopupWindow mNetworkPopupWindow;
     private SharePopupWindow mSharePopupWindow;
+    private boolean mNetworkOnline = false;
     // facebook
     private ShareDialog mShareDialogFacebook;
     private CallbackManager mCallbackManager;
+
+    private static final int CHECK_NETWORK_END = 100;
+    private MyHandler mHandler;
+    private static class MyHandler extends Handler {
+        private SoftReference<LibraryActivity> softReference;
+
+        public MyHandler (LibraryActivity activity) {
+            softReference = new SoftReference<LibraryActivity>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            LibraryActivity activity = softReference.get();
+            if (activity == null) {
+                return;
+            }
+            switch (msg.what) {
+                case CHECK_NETWORK_END:
+                    openShareWindow(activity);
+                    break;
+            }
+        }
+    }
+
+    private static void openShareWindow(LibraryActivity activity) {
+        activity.mNetworkPopupWindow.close();
+        // network disable
+        if (!activity.mNetworkOnline) {
+            ToastUtil.show(activity, activity.getResources().getString(R.string.network_disable));
+            return;
+        }
+        if (activity.mIsPhoto) {
+            if (activity.mPhotoFragment != null && activity.mPhotoFragment.canShare()) {
+                activity.showSharePopupWindow(activity.mPhotoFragment.getSharePath());
+            }
+        } else {
+            if (activity.mVideoFragment != null && activity.mVideoFragment.canShare()) {
+                activity.showSharePopupWindow(activity.mVideoFragment.getSharePath());
+            }
+        }
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_library);
         mUnbinder = ButterKnife.bind(this);
+        mHandler = new MyHandler(this);
         // init
         mFragmentManager = getSupportFragmentManager();
         mPhotoFragment = PhotoFragment.getInstance();
@@ -149,13 +200,33 @@ public class LibraryActivity extends AppCompatActivity {
 
     @OnClick(R.id.library_share)
     protected void actionShare() {
-        if (mIsPhoto) {
-            if (mPhotoFragment != null && mPhotoFragment.canShare()) {
-                showSharePopupWindow(mPhotoFragment.getSharePath());
+        // show dialog, and check the network connection
+        if (!mNetworkOnline) {
+            if (mNetworkPopupWindow == null) {
+                mNetworkPopupWindow = new CheckNetworkPopupWindow(this);
             }
+            mNetworkPopupWindow.showAtBottom();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    boolean isConnected = NetworkUtils.isNetworkConnected(getApplicationContext());
+                    boolean isAvailable = NetworkUtils.isNetworkAvailable(getApplicationContext());
+                    boolean isOnline = NetworkUtils.isNetworkOnline();
+                    mNetworkOnline = isConnected && isAvailable && isOnline;
+                    if (mHandler != null) {
+                        mHandler.sendEmptyMessage(CHECK_NETWORK_END);
+                    }
+                }
+            }).start();
         } else {
-            if (mVideoFragment != null && mVideoFragment.canShare()) {
-                showSharePopupWindow(mVideoFragment.getSharePath());
+            if (mIsPhoto) {
+                if (mPhotoFragment != null && mPhotoFragment.canShare()) {
+                    showSharePopupWindow(mPhotoFragment.getSharePath());
+                }
+            } else {
+                if (mVideoFragment != null && mVideoFragment.canShare()) {
+                    showSharePopupWindow(mVideoFragment.getSharePath());
+                }
             }
         }
     }
@@ -221,36 +292,12 @@ public class LibraryActivity extends AppCompatActivity {
         }
     }
 
-    public boolean isNetworkOnline() {
-        Runtime runtime = Runtime.getRuntime();
-        try {
-            Process ipProcess = runtime.exec("ping -c 1 www.google.com");
-            int exitValue = ipProcess.waitFor();
-            return (exitValue == 0);
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
     /**
      * display popup window of share
      */
     private void showSharePopupWindow(String path) {
-        if (!WLANAPI.isConnectionAvailable(LibraryActivity.this)) {
-            /*WLANAPI wlanapi = new WLANAPI(LibraryActivity.this);
-            String ssid = wlanapi.getSSID();
-            if (getResources().getString(R.string.device_wifi).equals(ssid)) {
-                ToastUtil.show(LibraryActivity.this, getResources().getString(R.string.network_disable));
-                return;
-            }*/
-            /*if (!isNetworkOnline()) {
-                ToastUtil.show(LibraryActivity.this, getResources().getString(R.string.network_disable));
-                return;
-            }*/
-            ToastUtil.show(LibraryActivity.this, getResources().getString(R.string.network_disable));
-            return;
-        }
+        MyApplication.getKeyHash(getApplicationContext());
+        // show share window
         if (mSharePopupWindow == null) {
             mSharePopupWindow = new SharePopupWindow(LibraryActivity.this);
             mSharePopupWindow.setOnPlatformListener(new SharePopupWindow.OnPlatformListener() {
@@ -258,6 +305,7 @@ public class LibraryActivity extends AppCompatActivity {
                 public void onYoutube(String path) {
                     if (TextUtils.isEmpty(path)) {
                         ToastUtil.show(LibraryActivity.this, getResources().getString(R.string.share_to_youtube_failure));
+                        Logger.d(TAG, "the share path is null");
                         return;
                     }
                     shareVideoToYoutube(path);
@@ -267,6 +315,7 @@ public class LibraryActivity extends AppCompatActivity {
                 public void onFacebook(String path) {
                     if (TextUtils.isEmpty(path)) {
                         ToastUtil.show(LibraryActivity.this, getResources().getString(R.string.share_to_facebook_failure));
+                        Logger.d(TAG, "the share path is null");
                         return;
                     }
                     if (mIsPhoto) {
@@ -280,6 +329,7 @@ public class LibraryActivity extends AppCompatActivity {
                 public void onInstagram(String path) {
                     if (TextUtils.isEmpty(path)) {
                         ToastUtil.show(LibraryActivity.this, getResources().getString(R.string.share_to_instagram_failure));
+                        Logger.d(TAG, "the share path is null");
                         return;
                     }
                     if (mIsPhoto) {
@@ -304,19 +354,21 @@ public class LibraryActivity extends AppCompatActivity {
             @Override
             public void onSuccess(Sharer.Result result) {
                 ToastUtil.show(LibraryActivity.this, getResources().getString(R.string.share_to_facebook_success));
-                Logger.e("xmzd", "share to facebook success: postId == " + result.getPostId());
+                Logger.e(TAG, "share to facebook success: postId == " + result.getPostId());
             }
 
             @Override
             public void onCancel() {
                 ToastUtil.show(LibraryActivity.this, getResources().getString(R.string.share_to_facebook_failure));
-                Logger.e("xmzd", "cancel share to facebook");
+                Logger.e(TAG, "cancel share to facebook");
             }
 
             @Override
             public void onError(FacebookException error) {
                 ToastUtil.show(LibraryActivity.this, getResources().getString(R.string.share_to_facebook_failure));
-                Logger.e("xmzd", "an error occurred when share to facebook");
+                Logger.e(TAG, error.toString());
+                Logger.e(TAG, error.getMessage());
+                Logger.e(TAG, error.getLocalizedMessage());
             }
         });
     }

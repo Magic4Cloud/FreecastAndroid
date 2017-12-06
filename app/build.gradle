@@ -118,7 +118,7 @@ dependencies {
     compile 'com.github.bumptech.glide:glide:3.7.0'
 
     //facebook
-    compile 'com.facebook.android:facebook-android-sdk:4.+'
+    compile 'com.facebook.android:facebook-android-sdk:4.28.0'
     //net
     compile 'com.squareup.retrofit2:retrofit:2.2.0'
     compile 'com.squareup.retrofit2:adapter-rxjava:2.2.0'
@@ -129,9 +129,4 @@ dependencies {
     compile 'io.reactivex:rxandroid:1.2.1'
 
     compile group: 'org.apache.commons', name: 'commons-compress', version: '1.11'
-
-    // leak
-    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.1'
-    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
-    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
 }

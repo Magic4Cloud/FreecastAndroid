@@ -2,6 +2,8 @@ package com.cloud4magic.freecast.utils;
 
 import android.util.Log;
 
+import com.cloud4magic.freecast.BuildConfig;
+
 /**
  * Date    2017/6/26
  * Author  xiaomao
@@ -9,11 +11,11 @@ import android.util.Log;
 
 public class Logger {
 
-    private static String APP_NAME = "FREESTREAM-";
-    private static boolean LOG_E = true;
-    private static boolean LOG_W = true;
-    private static boolean LOG_I = true;
-    private static boolean LOG_D = true;
+    private static String APP_NAME = "FreeStream-";
+    private static boolean LOG_E = BuildConfig.DEBUG_LOG;
+    private static boolean LOG_W = BuildConfig.DEBUG_LOG;
+    private static boolean LOG_I = BuildConfig.DEBUG_LOG;
+    private static boolean LOG_D = BuildConfig.DEBUG_LOG;
 
     public static void e(String tag, String msg) {
         if (LOG_E) {

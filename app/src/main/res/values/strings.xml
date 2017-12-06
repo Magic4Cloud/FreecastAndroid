@@ -7,6 +7,7 @@
     <string name="action_settings">Settings</string>
 
     <string name="connecting">Connecting…</string>
+    <string name="check_network_connection">Checking the network connection…</string>
     <string name="no_wifi">No wifi connected</string>
     <string name="device_not_found">Device not found, please check your wifi connection!</string>
     <string name="connect_failed_password">"Connect failed with wrong password!"</string>
@@ -80,7 +81,7 @@
     <string name="facebook_not_installed">Please download Facebook from Google Play first !</string>
     <string name="instagram_not_installed">Please download Instagram from Google Play first !</string>
 
-    <string name="facebook_app_id">273818069762195</string>
+    <string name="facebook_app_id">115586109153322</string>
     <string name="youtube_client_id">166089579442-n8pf4i5k6pd58tp9hijbt57ce3v5hlpj.apps.googleusercontent.com</string>
 
     <string name="device_wifi">"\"FREECAST_2C29D4\""</string>
