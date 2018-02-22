@@ -178,6 +178,9 @@ public class MediaAdapter extends RecyclerView.Adapter<MediaAdapter.ItemViewHold
 
     public void setSelect(boolean select) {
         mSelect = select;
+        if (mList == null) {
+            return;
+        }
         notifyItemRangeChanged(0, mList.size());
     }
 
