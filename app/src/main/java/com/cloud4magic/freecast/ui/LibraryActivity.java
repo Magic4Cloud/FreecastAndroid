@@ -13,6 +13,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
@@ -211,8 +212,8 @@ public class LibraryActivity extends AppCompatActivity {
                 public void run() {
                     boolean isConnected = NetworkUtils.isNetworkConnected(getApplicationContext());
                     boolean isAvailable = NetworkUtils.isNetworkAvailable(getApplicationContext());
-                    boolean isOnline = NetworkUtils.isNetworkOnline();
-                    mNetworkOnline = isConnected && isAvailable && isOnline;
+//                    boolean isOnline = NetworkUtils.isNetworkOnline();
+                    mNetworkOnline = isConnected && isAvailable;// && isOnline;
                     if (mHandler != null) {
                         mHandler.sendEmptyMessage(CHECK_NETWORK_END);
                     }
