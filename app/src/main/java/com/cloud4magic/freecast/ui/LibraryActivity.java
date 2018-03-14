@@ -1,11 +1,14 @@
 package com.cloud4magic.freecast.ui;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -26,6 +29,7 @@ import com.cloud4magic.freecast.ui.fragment.PhotoFragment;
 import com.cloud4magic.freecast.ui.fragment.VideoFragment;
 import com.cloud4magic.freecast.utils.Logger;
 import com.cloud4magic.freecast.utils.NetworkUtils;
+import com.cloud4magic.freecast.utils.PermissionHelper;
 import com.cloud4magic.freecast.utils.ToastUtil;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -80,10 +84,11 @@ public class LibraryActivity extends AppCompatActivity {
 
     private static final int CHECK_NETWORK_END = 100;
     private MyHandler mHandler;
+
     private static class MyHandler extends Handler {
         private SoftReference<LibraryActivity> softReference;
 
-        public MyHandler (LibraryActivity activity) {
+        public MyHandler(LibraryActivity activity) {
             softReference = new SoftReference<LibraryActivity>(activity);
         }
 
@@ -138,6 +143,23 @@ public class LibraryActivity extends AppCompatActivity {
         setSelectDisable();
         // init facebook
         initFacebook();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PermissionHelper.PERMISSION_STORAGE_REQUEST_CODE
+                && permissions.length == 2
+                && grantResults.length == 2
+                && (permissions[0].equals(Manifest.permission.READ_EXTERNAL_STORAGE)
+                || permissions[0].equals(Manifest.permission.WRITE_EXTERNAL_STORAGE))
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (!mPhotoFragment.isHidden()) {
+                mPhotoFragment.loadPhoto();
+            } else {
+                mVideoFragment.loadVideo();
+            }
+        }
     }
 
     @OnClick(R.id.library_back)

@@ -24,6 +24,7 @@ import com.cloud4magic.freecast.bean.LibraryBean;
 import com.cloud4magic.freecast.bean.MediaBean;
 import com.cloud4magic.freecast.ui.ShowImageActivity;
 import com.cloud4magic.freecast.utils.Logger;
+import com.cloud4magic.freecast.utils.PermissionHelper;
 import com.cloud4magic.freecast.utils.ToastUtil;
 
 import java.io.File;
@@ -52,6 +53,7 @@ public class PhotoFragment extends Fragment {
 
     private static final int LOAD_SUCCESS = 100;
     private MyHandler mHandler;
+
     private static class MyHandler extends Handler {
 
         private SoftReference<PhotoFragment> mSoftReference;
@@ -132,7 +134,7 @@ public class PhotoFragment extends Fragment {
             }
         });
         mRecyclerView.setAdapter(mAdapter);
-        ((SimpleItemAnimator)mRecyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
+        ((SimpleItemAnimator) mRecyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
         // load
         loadPhoto();
     }
@@ -217,7 +219,16 @@ public class PhotoFragment extends Fragment {
     /**
      * load file in work thread
      */
-    private void loadPhoto() {
+    public void loadPhoto() {
+        if (!PermissionHelper.checkSelfStoragePermission(getActivity())) {
+            if (PermissionHelper.shouldShowRequestPermissionRationale(getActivity())) {
+                PermissionHelper.requestStoragePermission(getActivity());
+            } else {
+                ToastUtil.showLong(getActivity(), R.string.non_permission_tip);
+            }
+            return;
+        }
+
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {

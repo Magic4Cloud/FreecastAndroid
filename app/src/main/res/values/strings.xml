@@ -86,5 +86,6 @@
 
     <string name="device_wifi">"\"FREECAST_2C29D4\""</string>
     <string name="coming_soon">Coming soon</string>
+    <string name="non_permission_tip">App does not have access to albums, please set up open permissions in the system</string>
 
 </resources>
